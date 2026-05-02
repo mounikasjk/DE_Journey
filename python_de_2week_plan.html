@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python DE — 2-Week Interview Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Fraunces:opsz,wght@9..144,300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F7F5F0;
+  --surface: #FFFFFF;
+  --surface2: #F0EDE6;
+  --border: #E2DDD5;
+  --border2: #CCC8BE;
+  --ink: #1A1815;
+  --ink2: #5C5750;
+  --ink3: #9C9890;
+  --accent: #C84B31;
+  --accent2: #2B6CB0;
+  --accent3: #276749;
+  --gold: #B7791F;
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Fraunces', serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--serif); min-height: 100vh; }
+
+/* TOP BAR */
+.topbar {
+  background: var(--ink);
+  color: #F7F5F0;
+  padding: 0 2rem;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.topbar-title { font-family: var(--mono); font-size: 13px; font-weight: 600; letter-spacing: 0.04em; color: #F7F5F0; }
+.topbar-title span { color: #FF8A70; }
+.topbar-right { display: flex; gap: 1.5rem; align-items: center; }
+.topbar-stat { font-family: var(--mono); font-size: 12px; color: #9C9890; }
+.topbar-stat b { color: #F7F5F0; }
+.top-progress { width: 120px; height: 3px; background: #333; border-radius: 2px; overflow: hidden; }
+.top-progress-fill { height: 3px; background: #FF8A70; border-radius: 2px; transition: width 0.4s; }
+
+/* LAYOUT */
+.layout { display: flex; min-height: calc(100vh - 52px); }
+
+/* SIDEBAR */
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.5rem 0;
+  position: sticky;
+  top: 52px;
+  height: calc(100vh - 52px);
+  overflow-y: auto;
+}
+.sidebar-section { margin-bottom: 0.5rem; }
+.sidebar-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--ink3);
+  padding: 0 1.25rem;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.day-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 1.25rem;
+  cursor: pointer;
+  transition: background 0.1s;
+  border-left: 2px solid transparent;
+}
+.day-link:hover { background: var(--bg); }
+.day-link.active { background: var(--bg); border-left-color: var(--accent); }
+.day-link.done-link { border-left-color: var(--accent3); }
+.dl-num { font-family: var(--mono); font-size: 11px; color: var(--ink3); min-width: 28px; }
+.dl-name { font-size: 12px; color: var(--ink2); font-family: var(--serif); font-weight: 400; line-height: 1.3; }
+.day-link.active .dl-name { color: var(--ink); font-weight: 600; }
+.dl-check { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--border2); margin-left: auto; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.dl-check.c { background: var(--accent3); border-color: var(--accent3); }
+.dl-check.c::after { content:''; width:4px; height:7px; border:1.5px solid #fff; border-top:none; border-left:none; transform:rotate(45deg); margin-top:-1px; }
+
+/* MAIN */
+.main { flex: 1; padding: 2rem; max-width: 780px; }
+
+/* DAY PANEL */
+.day-panel { display: none; }
+.day-panel.active { display: block; }
+
+.day-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.day-badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  background: var(--ink);
+  color: #F7F5F0;
+  padding: 3px 10px;
+  border-radius: 3px;
+  display: inline-block;
+  margin-bottom: 8px;
+  letter-spacing: 0.04em;
+}
+.day-badge.w2 { background: var(--accent2); }
+.day-heading { font-family: var(--serif); font-size: 22px; font-weight: 600; color: var(--ink); line-height: 1.2; }
+.day-subheading { font-size: 14px; color: var(--ink2); margin-top: 6px; font-weight: 300; }
+.day-mark-btn {
+  padding: 8px 18px;
+  border-radius: 4px;
+  border: 1.5px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+  font-weight: 600;
+}
+.day-mark-btn:hover { background: var(--accent); color: #fff; }
+.day-mark-btn.marked { background: var(--accent3); border-color: var(--accent3); color: #fff; }
+
+/* SECTIONS */
+.section { margin-bottom: 1.75rem; }
+.section-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* HOUR BLOCKS */
+.hour-grid { display: flex; flex-direction: column; gap: 6px; }
+.hour-block {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  align-items: start;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.hour-block:hover { border-color: var(--border2); }
+.hour-block.hb-done { border-left: 3px solid var(--accent3); }
+.hour-block.hb-break { background: var(--surface2); border-style: dashed; cursor: default; opacity: 0.7; }
+.hb-time { font-family: var(--mono); font-size: 11px; color: var(--ink3); padding-top: 2px; }
+.hb-body {}
+.hb-topic { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 3px; font-family: var(--serif); }
+.hb-desc { font-size: 12px; color: var(--ink2); line-height: 1.6; font-weight: 300; }
+.hb-check { width: 16px; height: 16px; border-radius: 3px; border: 1.5px solid var(--border2); margin-left: auto; flex-shrink: 0; display:flex; align-items:center; justify-content:center; }
+.hb-check.c { background: var(--accent3); border-color: var(--accent3); }
+.hb-check.c::after { content:''; width:4px; height:8px; border:1.5px solid #fff; border-top:none; border-left:none; transform:rotate(45deg); margin-top:-1px; }
+.hour-block { grid-template-columns: 90px 1fr 20px; }
+
+/* PROBLEMS */
+.problem-list { display: flex; flex-direction: column; gap: 5px; }
+.problem-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.problem-item:hover { border-color: var(--border2); }
+.problem-item.p-done { border-left: 3px solid var(--accent3); }
+.p-num { font-family: var(--mono); font-size: 11px; color: var(--ink3); min-width: 26px; padding-top: 1px; }
+.p-body { flex: 1; }
+.p-text { font-size: 13px; color: var(--ink); line-height: 1.5; font-weight: 400; }
+.p-diff { font-family: var(--mono); font-size: 10px; margin-top: 4px; display: inline-block; padding: 1px 7px; border-radius: 3px; }
+.easy { background: #EAF3DE; color: #276749; }
+.medium { background: #FEF3C7; color: #B7791F; }
+.hard { background: #FEE2E2; color: #C84B31; }
+.p-check { width: 16px; height: 16px; border-radius: 3px; border: 1.5px solid var(--border2); flex-shrink:0; margin-top:1px; display:flex; align-items:center; justify-content:center; }
+.p-check.c { background: var(--accent3); border-color: var(--accent3); }
+.p-check.c::after { content:''; width:4px; height:8px; border:1.5px solid #fff; border-top:none; border-left:none; transform:rotate(45deg); margin-top:-1px; }
+
+/* RESOURCES */
+.resource-grid { display: flex; flex-direction: column; gap: 5px; }
+.resource-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.r-type { font-family: var(--mono); font-size: 10px; padding: 2px 7px; border-radius: 3px; flex-shrink: 0; }
+.r-video { background: #FEE2E2; color: var(--accent); }
+.r-read  { background: #E6F1FB; color: var(--accent2); }
+.r-practice { background: #EAF3DE; color: var(--accent3); }
+.r-doc { background: #FEF3C7; color: var(--gold); }
+.r-name { font-size: 13px; color: var(--ink); flex: 1; }
+.r-link { font-family: var(--mono); font-size: 11px; color: var(--accent2); text-decoration: none; }
+.r-link:hover { text-decoration: underline; }
+
+/* TAGS */
+.pill { display: inline-block; font-family: var(--mono); font-size: 10px; padding: 2px 8px; border-radius: 3px; margin-right: 5px; }
+.pill-sql { background: #EAF3DE; color: var(--accent3); }
+.pill-de  { background: #E6F1FB; color: var(--accent2); }
+.pill-hot { background: #FEE2E2; color: var(--accent); }
+
+/* NOTES */
+.notes-box { margin-top: 1rem; }
+.notes-box textarea {
+  width: 100%;
+  min-height: 80px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: var(--serif);
+  font-size: 13px;
+  color: var(--ink);
+  resize: vertical;
+  outline: none;
+  line-height: 1.7;
+}
+.notes-box textarea:focus { border-color: var(--border2); }
+.notes-label { font-family: var(--mono); font-size: 11px; color: var(--ink3); margin-bottom: 6px; letter-spacing: 0.05em; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-title">Python DE · <span>2-Week Interview Prep</span> · Mounika</div>
+  <div class="topbar-right">
+    <div class="topbar-stat">Done: <b id="top-done">0</b>/14 days</div>
+    <div class="top-progress"><div class="top-progress-fill" id="top-fill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<div class="layout">
+<nav class="sidebar" id="sidebar"></nav>
+<main class="main" id="main"></main>
+</div>
+
+<script>
+const plan = [
+  {
+    day:1, week:1,
+    title:"Python Core — Variables, Lists, Dicts",
+    sub:"8 hrs · Foundation with SQL analogies · You write real code today",
+    hours:[
+      {t:"9–10 AM",  topic:"Setup + Variables & Types",       desc:"Install Python, open Replit. int, str, float, bool, f-strings, type casting. SQL column type analogy.", brk:false},
+      {t:"10–11 AM", topic:"Exercise: Variables drills",       desc:"Employee record builder, type casting from CSV strings, comparisons. 10 small programs.", brk:false},
+      {t:"11–12 PM", topic:"Lists & Loops",                   desc:"List as result set. for, while, enumerate(), range(). Slicing. append/remove.", brk:false},
+      {t:"12–1 PM",  topic:"Lunch break",                     desc:"Rest. Step away from the screen.", brk:true},
+      {t:"1–2 PM",   topic:"Exercise: List problems",         desc:"Max without sort, remove duplicates, reverse, sum even numbers, find index.", brk:false},
+      {t:"2–3 PM",   topic:"Dictionaries & Sets",             desc:"Dict = one row. List of dicts = table. CRUD ops, .items(), nested dicts.", brk:false},
+      {t:"3–4 PM",   topic:"Exercise: Dict problems",         desc:"Dept grouping, salary analyser, add computed keys, filter by nested value.", brk:false},
+      {t:"4–5 PM",   topic:"Functions — def, return, scope",  desc:"Pure functions, *args, **kwargs, default params, closures intro.", brk:false},
+    ],
+    problems:[
+      {t:"Reverse a string without slicing", d:"easy"},
+      {t:"Find second largest in a list without sorting", d:"easy"},
+      {t:"Count character frequency in a string → dict", d:"easy"},
+      {t:"Group list of employee dicts by department", d:"easy"},
+      {t:"Remove duplicates from a list preserving order", d:"easy"},
+      {t:"Write a function that returns a running total (closure)", d:"medium"},
+    ],
+    resources:[
+      {type:"video",    name:"Python for Beginners — Mosh (first 2 hrs)", url:"https://www.youtube.com/watch?v=kqtD5dpn9C8"},
+      {type:"practice", name:"HackerRank Python — Easy track (start here)", url:"https://www.hackerrank.com/domains/python"},
+      {type:"read",     name:"Python Cheatsheet — Comprehensive Quick Ref", url:"https://www.pythoncheatsheet.org"},
+      {type:"practice", name:"Exercism Python track — first 5 exercises", url:"https://exercism.org/tracks/python"},
+    ]
+  },
+  {
+    day:2, week:1,
+    title:"Comprehensions, File I/O & Error Handling",
+    sub:"9 hrs · Build your first real ETL script today",
+    hours:[
+      {t:"9–10 AM",  topic:"List Comprehensions",             desc:"[x for x in list if cond]. Dict comprehensions. Nested comprehensions. Replace filter loops.", brk:false},
+      {t:"10–11 AM", topic:"Exercise: Comprehension drills",  desc:"Filter salaries, extract keys, flatten nested list, transform dicts — all comprehensions only.", brk:false},
+      {t:"11–12 PM", topic:"File I/O — CSV reading",          desc:"open(), with statement, csv.reader, csv.DictReader. Read a real messy CSV.", brk:false},
+      {t:"12–1 PM",  topic:"Lunch break",                     desc:"Rest.", brk:true},
+      {t:"1–2 PM",   topic:"File I/O — JSON + writing",       desc:"json.load(), json.dump(), csv.writer. Write cleaned output. Real ETL pattern.", brk:false},
+      {t:"2–3 PM",   topic:"Error Handling",                  desc:"try/except/finally/else. FileNotFoundError, ValueError, KeyError. Logging bad rows.", brk:false},
+      {t:"3–4 PM",   topic:"Mini-project: ETL Pipeline",      desc:"Read JSON employees file → validate + clean → write to CSV. Handle all errors.", brk:false},
+      {t:"4–5 PM",   topic:"Review + strengthen weak spots",  desc:"Re-do any exercise that felt shaky. Ask Claude to explain anything unclear.", brk:false},
+      {t:"5–6 PM",   topic:"Solve 3 practice problems",       desc:"From today's problem list. Time yourself — 20 min per problem.", brk:false},
+    ],
+    problems:[
+      {t:"Flatten a nested list [[1,2],[3,[4,5]]] → [1,2,3,4,5]", d:"medium"},
+      {t:"Read a CSV, filter rows where salary > 50000, write to new CSV", d:"medium"},
+      {t:"Parse a JSON file of orders, compute total per customer", d:"medium"},
+      {t:"Write a safe CSV reader — log bad rows, never crash", d:"medium"},
+      {t:"Find all pairs in a list that sum to a target value", d:"medium"},
+      {t:"Word frequency counter from a text file", d:"easy"},
+    ],
+    resources:[
+      {type:"video",   name:"Python File Handling — Corey Schafer", url:"https://www.youtube.com/watch?v=Uh2ebFW8OYM"},
+      {type:"read",    name:"Real Python — Working with CSV files", url:"https://realpython.com/python-csv/"},
+      {type:"read",    name:"Real Python — JSON in Python", url:"https://realpython.com/python-json/"},
+      {type:"practice",name:"LeetCode Easy — Strings & Arrays (10 problems)", url:"https://leetcode.com/problemset/?difficulty=EASY&topicSlugs=array,string"},
+    ]
+  },
+  {
+    day:3, week:1,
+    title:"Pandas — DataFrames, Filtering, GroupBy",
+    sub:"8 hrs · Pandas = SQL in Python. Your fastest win.",
+    hours:[
+      {t:"9–10 AM",  topic:"Pandas intro — DataFrames",       desc:"pd.read_csv(), read_json(), head(), info(), dtypes, describe(). Like DESC TABLE.", brk:false},
+      {t:"10–11 AM", topic:"Filtering & selecting",           desc:".loc[], .iloc[], boolean indexing, query(). SQL WHERE clause in Python.", brk:false},
+      {t:"11–12 PM", topic:"Exercise: Filter problems",       desc:"Filter by multiple conditions, select columns, sort values, find nulls.", brk:false},
+      {t:"12–1 PM",  topic:"Lunch break",                     desc:"Rest.", brk:true},
+      {t:"1–2 PM",   topic:"GroupBy & aggregations",          desc:"groupby().agg(). Named aggs. Multiple functions. transform() for keeping shape.", brk:false},
+      {t:"2–3 PM",   topic:"Merge & join types",              desc:"pd.merge(how='inner/left/right/outer'). concat(). Duplicate column handling.", brk:false},
+      {t:"3–4 PM",   topic:"Exercise: Join problems",         desc:"3 join types on employee+dept tables. Find unmatched rows. Concat two datasets.", brk:false},
+      {t:"4–6 PM",   topic:"Mini-project: Pandas ETL",        desc:"Ingest 2 CSVs → merge → group → aggregate → write Parquet. Full pipeline.", brk:false},
+    ],
+    problems:[
+      {t:"Find top 3 departments by average salary using groupby", d:"easy"},
+      {t:"Left join employees to departments, find employees with no dept", d:"medium"},
+      {t:"Pivot: rows=dept, cols=month, values=total_sales", d:"medium"},
+      {t:"Find duplicate rows based on name+dept combo", d:"easy"},
+      {t:"Calculate month-over-month % change in a sales column", d:"medium"},
+      {t:"Merge 3 tables: orders + customers + products", d:"hard"},
+    ],
+    resources:[
+      {type:"video",   name:"Pandas Tutorial — Corey Schafer (complete)", url:"https://www.youtube.com/playlist?list=PL-osiE80TeTsWmV9i9c58mdDCSskIFdDS"},
+      {type:"read",    name:"Pandas Official 10 min guide", url:"https://pandas.pydata.org/docs/user_guide/10min.html"},
+      {type:"practice",name:"Kaggle Pandas micro-course (free, hands-on)", url:"https://www.kaggle.com/learn/pandas"},
+      {type:"practice",name:"LeetCode — Pandas problems (new section)", url:"https://leetcode.com/problemset/?topicSlugs=pandas"},
+    ]
+  },
+  {
+    day:4, week:1,
+    title:"Pandas Advanced — Nulls, Apply, Window, Parquet",
+    sub:"8 hrs · Data quality + real DE patterns",
+    hours:[
+      {t:"9–10 AM",  topic:"Null handling",                   desc:"isnull(), fillna(), dropna(), interpolate(). Strategy: drop vs fill vs flag.", brk:false},
+      {t:"10–11 AM", topic:"apply(), map(), lambda",          desc:"Row-wise transforms. apply() vs vectorized. CASE WHEN → apply with lambda.", brk:false},
+      {t:"11–12 PM", topic:"Window functions in Pandas",      desc:"rank(), cumsum(), rolling(), shift(). Same as SQL ROW_NUMBER/LAG/LEAD.", brk:false},
+      {t:"12–1 PM",  topic:"Lunch break",                     desc:"Rest.", brk:true},
+      {t:"1–2 PM",   topic:"Parquet format",                  desc:"to_parquet(), read_parquet(), partition_cols, compression. Why DE uses Parquet.", brk:false},
+      {t:"2–3 PM",   topic:"Performance tips",                desc:"Avoid loops — use vectorized ops. dtypes optimization. chunking large files.", brk:false},
+      {t:"3–5 PM",   topic:"5 real DE problems",              desc:"Data cleaning pipeline, deduplication, SCD Type 2 simulation, running totals.", brk:false},
+      {t:"5–6 PM",   topic:"Solve + review problems",         desc:"Time yourself. Review solutions. Note patterns.", brk:false},
+    ],
+    problems:[
+      {t:"Fill nulls in salary col with dept average (not global avg)", d:"hard"},
+      {t:"Add rank column within each dept by salary (SQL RANK() equivalent)", d:"medium"},
+      {t:"Calculate 7-day rolling average on a time series", d:"medium"},
+      {t:"Flag rows where value deviates >2 std from group mean", d:"hard"},
+      {t:"Deduplicate keeping latest record per ID based on timestamp", d:"medium"},
+      {t:"Write partitioned Parquet by year and month columns", d:"medium"},
+    ],
+    resources:[
+      {type:"read",    name:"Real Python — Pandas apply() guide", url:"https://realpython.com/pandas-dataframe/"},
+      {type:"read",    name:"Towards Data Science — Pandas window functions", url:"https://towardsdatascience.com/"},
+      {type:"practice",name:"Kaggle Datasets — practice on real messy data", url:"https://www.kaggle.com/datasets"},
+      {type:"doc",     name:"Pandas docs — GroupBy operations", url:"https://pandas.pydata.org/docs/user_guide/groupby.html"},
+    ]
+  },
+  {
+    day:5, week:1,
+    title:"PySpark Fundamentals",
+    sub:"9 hrs · Pandas at scale. Syntax is almost identical.",
+    hours:[
+      {t:"9–10 AM",  topic:"Spark concepts",                  desc:"Why Spark? Driver vs executor. Lazy evaluation. DAG. RDD vs DataFrame. When to use.", brk:false},
+      {t:"10–11 AM", topic:"SparkSession + reading data",     desc:"SparkSession.builder, read.csv(), read.parquet(), schema inference vs StructType.", brk:false},
+      {t:"11–12 PM", topic:"Transformations vs actions",      desc:"select, filter, withColumn, groupBy — lazy. show(), collect(), count() — triggers.", brk:false},
+      {t:"12–1 PM",  topic:"Lunch break",                     desc:"Rest.", brk:true},
+      {t:"1–2 PM",   topic:"PySpark SQL",                     desc:"createOrReplaceTempView(), spark.sql(). Mix SQL and DataFrame API freely.", brk:false},
+      {t:"2–3 PM",   topic:"Joins in PySpark",                desc:"join(), broadcast(), shuffle join vs broadcast join. When to use each.", brk:false},
+      {t:"3–4 PM",   topic:"UDFs — user defined functions",   desc:"udf(), pandas_udf(). Performance warning. When to use vs built-ins.", brk:false},
+      {t:"4–6 PM",   topic:"Build: PySpark transformation",   desc:"Read CSV → filter → groupBy → join → write Parquet. Full Spark job.", brk:false},
+      {t:"6–7 PM",   topic:"Solve 3 problems",               desc:"Timed PySpark problems from today's list.", brk:false},
+    ],
+    problems:[
+      {t:"Read a CSV in PySpark, filter by column, write to Parquet", d:"easy"},
+      {t:"GroupBy dept, compute avg salary and count — PySpark", d:"easy"},
+      {t:"Join two DataFrames, keep only matching rows (inner join)", d:"medium"},
+      {t:"Add a column that flags if salary > dept average (window fn)", d:"hard"},
+      {t:"Convert a Pandas pipeline to PySpark equivalents", d:"medium"},
+      {t:"Explain when you'd use broadcast join vs shuffle join", d:"medium"},
+    ],
+    resources:[
+      {type:"video",   name:"PySpark Tutorial — Frank Kane (Udemy free preview)", url:"https://www.youtube.com/watch?v=_C8kWso4ne4"},
+      {type:"read",    name:"PySpark Official Docs — Getting Started", url:"https://spark.apache.org/docs/latest/api/python/getting_started/index.html"},
+      {type:"practice",name:"Databricks Community Edition — free Spark cluster", url:"https://community.cloud.databricks.com"},
+      {type:"practice",name:"LeetCode — PySpark problems", url:"https://leetcode.com/problemset/?topicSlugs=pyspark"},
+    ]
+  },
+  {
+    day:6, week:1,
+    title:"PySpark Advanced — Window Functions & Performance",
+    sub:"8 hrs · Senior DE interview territory",
+    hours:[
+      {t:"9–10 AM",  topic:"Window functions in PySpark",     desc:"Window.partitionBy().orderBy(). rank(), dense_rank(), lag(), lead(), cumsum().", brk:false},
+      {t:"10–11 AM", topic:"Exercise: Window problems",       desc:"Running total, rank within group, compare row to previous row, top-N per group.", brk:false},
+      {t:"11–12 PM", topic:"Partitioning & performance",      desc:"repartition() vs coalesce(). Shuffle optimization. Partition pruning. Cache/persist.", brk:false},
+      {t:"12–1 PM",  topic:"Lunch break",                     desc:"Rest.", brk:true},
+      {t:"1–2 PM",   topic:"Skew handling",                   desc:"Data skew problem. Salting technique. AQE (Adaptive Query Execution) in Spark 3.", brk:false},
+      {t:"2–3 PM",   topic:"Delta Lake basics",               desc:"ACID transactions, time travel, MERGE INTO, schema evolution, vacuum.", brk:false},
+      {t:"3–5 PM",   topic:"Build: full Spark ETL with Delta",desc:"Ingest → transform with windows → MERGE INTO Delta table. SCD Type 2.", brk:false},
+      {t:"5–6 PM",   topic:"Solve problems + review",         desc:"Today's problem list timed.", brk:false},
+    ],
+    problems:[
+      {t:"Top 3 earners per department using Window + rank()", d:"medium"},
+      {t:"Calculate running total of sales partitioned by month", d:"medium"},
+      {t:"lag() — find difference between current and previous row", d:"medium"},
+      {t:"MERGE INTO Delta table: upsert new records, update existing", d:"hard"},
+      {t:"Explain repartition(10) vs coalesce(2) — when to use each", d:"medium"},
+      {t:"Implement SCD Type 2 in PySpark with Delta Lake", d:"hard"},
+    ],
+    resources:[
+      {type:"video",   name:"Delta Lake crash course — Databricks YouTube", url:"https://www.youtube.com/watch?v=BMO90DI82Zc"},
+      {type:"doc",     name:"Delta Lake docs — MERGE INTO syntax", url:"https://docs.delta.io/latest/delta-update.html"},
+      {type:"read",    name:"PySpark Window Functions — Real Python", url:"https://realpython.com/pyspark-intro/"},
+      {type:"practice",name:"Databricks Academy — free Delta Lake course", url:"https://www.databricks.com/learn/training/catalog"},
+    ]
+  },
+  {
+    day:7, week:1,
+    title:"Week 1 Review + Mock Problems",
+    sub:"6 hrs · Consolidate everything. Spot and fix weak areas.",
+    hours:[
+      {t:"9–10 AM",  topic:"Review weak areas",               desc:"Go through your notes. What felt shaky? List those topics.", brk:false},
+      {t:"10–12 PM", topic:"Timed problem set — Python core", desc:"5 problems, 20 min each, no hints. Simulate interview pressure.", brk:false},
+      {t:"12–1 PM",  topic:"Lunch break",                     desc:"Rest.", brk:true},
+      {t:"1–3 PM",   topic:"Timed problem set — Pandas",      desc:"5 Pandas problems, 25 min each. Data cleaning + aggregation + joins.", brk:false},
+      {t:"3–5 PM",   topic:"Timed problem set — PySpark",     desc:"3 PySpark problems. GroupBy, window, join. Write, run, verify output.", brk:false},
+      {t:"5–6 PM",   topic:"Self-assessment",                 desc:"Rate yourself 1–5 on each topic. Decide which Week 2 topics need extra time.", brk:false},
+    ],
+    problems:[
+      {t:"Given sales data: total revenue per region per quarter (Pandas)", d:"medium"},
+      {t:"Find customers who ordered in Jan but not Feb (set logic)", d:"medium"},
+      {t:"Parse nested JSON orders → flat DataFrame → group by product", d:"hard"},
+      {t:"PySpark: read partitioned Parquet, filter, window rank, write Delta", d:"hard"},
+      {t:"Write a Python function that retries on failure up to N times", d:"medium"},
+      {t:"Explain lazy evaluation in Spark with a real example", d:"medium"},
+    ],
+    resources:[
+      {type:"practice",name:"StrataScratch — Real DE interview problems (SQL+Python)", url:"https://www.stratascratch.com"},
+      {type:"practice",name:"DataLemur — Data Engineer SQL+Python questions", url:"https://datalemur.com"},
+      {type:"practice",name:"LeetCode — Database + Pandas (30 problems)", url:"https://leetcode.com/problemset/?topicSlugs=pandas,database"},
+      {type:"read",    name:"Interview Query — DE interview prep guide", url:"https://www.interviewquery.com/learning-paths/data-engineering"},
+    ]
+  },
+  {
+    day:8, week:2,
+    title:"Airflow — DAGs, Operators, Dependencies",
+    sub:"8 hrs · Airflow is in 80% of DE job descriptions",
+    hours:[
+      {t:"9–10 AM",  topic:"Airflow architecture",            desc:"DAG, task, operator, scheduler, executor. Why orchestration matters in DE.", brk:false},
+      {t:"10–11 AM", topic:"Your first DAG",                  desc:"dag = DAG(), PythonOperator, BashOperator. task1 >> task2 dependencies.", brk:false},
+      {t:"11–12 PM", topic:"Scheduling & cron",               desc:"schedule_interval, cron expressions, catchup=False, start_date, end_date.", brk:false},
+      {t:"12–1 PM",  topic:"Lunch break",                     desc:"Rest.", brk:true},
+      {t:"1–2 PM",   topic:"Sensors & triggers",              desc:"FileSensor, S3KeySensor, ExternalTaskSensor. Wait for upstream events.", brk:false},
+      {t:"2–3 PM",   topic:"XComs — passing data",           desc:"xcom_push(), xcom_pull(). What to pass (small) vs what not to (large data).", brk:false},
+      {t:"3–5 PM",   topic:"Build: real ETL DAG",             desc:"DAG: sense S3 file → Python transform → load to DB → notify. Full pipeline.", brk:false},
+      {t:"5–6 PM",   topic:"Common interview Q&A",            desc:"Idempotency, backfill, catchup, retries, SLA misses. Practice answers aloud.", brk:false},
+    ],
+    problems:[
+      {t:"Write a DAG that runs daily: extract API → transform → load CSV", d:"medium"},
+      {t:"Add retry logic and email alert on failure to a DAG", d:"medium"},
+      {t:"Use XCom to pass row count between tasks for data validation", d:"medium"},
+      {t:"Design a backfill strategy for 3 months of missing data", d:"hard"},
+      {t:"What happens if catchup=True and start_date is 6 months ago?", d:"medium"},
+      {t:"Make a DAG idempotent — explain what changes you'd make", d:"hard"},
+    ],
+    resources:[
+      {type:"video",   name:"Apache Airflow Tutorial — Marc Lamberti (YouTube)", url:"https://www.youtube.com/watch?v=K9AnJ9_ZAXE"},
+      {type:"read",    name:"Airflow Official Docs — Tutorial", url:"https://airflow.apache.org/docs/apache-airflow/stable/tutorial/index.html"},
+      {type:"practice",name:"Astronomer — free Airflow learning path", url:"https://www.astronomer.io/learn/"},
+      {type:"doc",     name:"Airflow Best Practices — Official guide", url:"https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html"},
+    ]
+  },
+  {
+    day:9, week:2,
+    title:"AWS for Data Engineers — S3, Glue, Lambda, Athena",
+    sub:"8 hrs · boto3 + AWS DE stack",
+    hours:[
+      {t:"9–10 AM",  topic:"boto3 basics + S3",               desc:"boto3.client(), boto3.resource(). upload_file, download_file, list_objects_v2.", brk:false},
+      {t:"10–11 AM", topic:"S3 patterns for DE",              desc:"Partitioned S3 paths, lifecycle policies, event triggers, presigned URLs.", brk:false},
+      {t:"11–12 PM", topic:"AWS Glue",                        desc:"Glue job scripting (PySpark), DynamicFrame, crawlers, Glue catalog.", brk:false},
+      {t:"12–1 PM",  topic:"Lunch break",                     desc:"Rest.", brk:true},
+      {t:"1–2 PM",   topic:"AWS Lambda for DE",               desc:"Lambda triggers from S3. Python handler. Packaging dependencies. Limitations.", brk:false},
+      {t:"2–3 PM",   topic:"Athena",                          desc:"Query S3 Parquet with Athena via boto3. Partitioning for cost optimization.", brk:false},
+      {t:"3–5 PM",   topic:"Build: S3 → Lambda → Glue pipeline",desc:"S3 upload triggers Lambda → kicks off Glue job → output to Athena table.", brk:false},
+      {t:"5–6 PM",   topic:"Interview Q&A practice",          desc:"S3 vs Redshift vs Athena — when to use what. Practice explaining aloud.", brk:false},
+    ],
+    problems:[
+      {t:"Write boto3 code to list all objects in S3 prefix and download latest", d:"easy"},
+      {t:"Write a Lambda handler that triggers Glue job on S3 file arrival", d:"medium"},
+      {t:"Write a Glue PySpark job: read S3 CSV → clean → write Parquet", d:"medium"},
+      {t:"Query Athena table via boto3, paginate results, return DataFrame", d:"medium"},
+      {t:"Design S3 partitioning strategy for 1TB/day clickstream data", d:"hard"},
+      {t:"When would you use Glue vs EMR vs Lambda for data processing?", d:"hard"},
+    ],
+    resources:[
+      {type:"video",   name:"AWS Glue Tutorial — Abhishek Veeramalla", url:"https://www.youtube.com/watch?v=dQnRP6X8QAU"},
+      {type:"read",    name:"boto3 Official Docs — S3 examples", url:"https://boto3.amazonaws.com/v1/documentation/api/latest/guide/s3-examples.html"},
+      {type:"practice",name:"AWS Free Tier — practice with real services", url:"https://aws.amazon.com/free/"},
+      {type:"doc",     name:"AWS Glue Developer Guide", url:"https://docs.aws.amazon.com/glue/latest/dg/what-is-glue.html"},
+    ]
+  },
+  {
+    day:10, week:2,
+    title:"GCP for Data Engineers — BigQuery, Dataflow, GCS",
+    sub:"7 hrs · GCP DE stack in Python",
+    hours:[
+      {t:"9–10 AM",  topic:"GCP overview for DE",             desc:"GCS = S3. BigQuery = Redshift+Athena. Dataflow = Glue/EMR. IAM basics.", brk:false},
+      {t:"10–11 AM", topic:"BigQuery Python client",          desc:"google-cloud-bigquery, Client(), run query, load DataFrame to BQ, schema.", brk:false},
+      {t:"11–12 PM", topic:"BigQuery advanced",               desc:"Partitioned tables, clustered tables, streaming inserts, query cost optimization.", brk:false},
+      {t:"12–1 PM",  topic:"Lunch break",                     desc:"Rest.", brk:true},
+      {t:"1–2 PM",   topic:"GCS with Python",                 desc:"google-cloud-storage. Upload, download, list, move objects. GCS triggers.", brk:false},
+      {t:"2–3 PM",   topic:"Dataflow overview",               desc:"Apache Beam in Python. Pipelines, PCollections, transforms. When to use Dataflow.", brk:false},
+      {t:"3–5 PM",   topic:"Build: GCS → BigQuery pipeline",  desc:"GCS file arrival → Python script → load to BQ → validate row count.", brk:false},
+      {t:"5–6 PM",   topic:"Interview Q&A",                   desc:"BQ partitioning, clustering, streaming vs batch load. Practice answers.", brk:false},
+    ],
+    problems:[
+      {t:"Write Python to query BigQuery and return results as Pandas DataFrame", d:"easy"},
+      {t:"Load a local Parquet file to BigQuery table with schema autodetect", d:"easy"},
+      {t:"Design a BQ partitioned table for 1B rows of event data", d:"hard"},
+      {t:"Write GCS upload function with retry and checksum validation", d:"medium"},
+      {t:"When would you use BigQuery vs Bigtable vs Spanner?", d:"hard"},
+      {t:"Estimate and optimize a BigQuery query that scans 500GB", d:"hard"},
+    ],
+    resources:[
+      {type:"video",   name:"BigQuery for Data Engineers — Google Cloud YouTube", url:"https://www.youtube.com/watch?v=d3MDxC_iuaw"},
+      {type:"read",    name:"BigQuery Python client docs", url:"https://cloud.google.com/bigquery/docs/quickstarts/quickstart-client-libraries"},
+      {type:"practice",name:"Google Cloud Skills Boost — free BQ labs", url:"https://www.cloudskillsboost.google"},
+      {type:"practice",name:"BigQuery sandbox — free, no credit card", url:"https://cloud.google.com/bigquery/docs/sandbox"},
+    ]
+  },
+  {
+    day:11, week:2,
+    title:"Python for Data Quality & Testing",
+    sub:"7 hrs · Data quality is the #1 DE interview topic in 2024–25",
+    hours:[
+      {t:"9–10 AM",  topic:"Data validation patterns",        desc:"Schema validation, null checks, range checks, referential integrity in Python.", brk:false},
+      {t:"10–11 AM", topic:"Great Expectations intro",        desc:"Expectation suites, data docs, checkpoints. Validate DataFrames automatically.", brk:false},
+      {t:"11–12 PM", topic:"Unit testing with pytest",        desc:"pytest basics, assert, fixtures, parametrize. Test your ETL functions.", brk:false},
+      {t:"12–1 PM",  topic:"Lunch break",                     desc:"Rest.", brk:true},
+      {t:"1–2 PM",   topic:"Testing Pandas pipelines",        desc:"Test input → output transformations. Mock external calls. Edge cases.", brk:false},
+      {t:"2–3 PM",   topic:"Logging and monitoring",          desc:"Python logging module. Structured logging. Row counts, SLA tracking.", brk:false},
+      {t:"3–5 PM",   topic:"Build: validated ETL with tests", desc:"ETL pipeline with GE expectations + pytest suite + logging. Production-grade.", brk:false},
+      {t:"5–6 PM",   topic:"Interview Q&A",                   desc:"How do you ensure data quality? What breaks in production? Practice answers.", brk:false},
+    ],
+    problems:[
+      {t:"Write a schema validator: raise error if required columns missing", d:"easy"},
+      {t:"pytest: test a groupby function with 3 edge cases (nulls, empty, dups)", d:"medium"},
+      {t:"Write Great Expectations suite for a sales DataFrame", d:"medium"},
+      {t:"Build a data reconciliation script: row counts + sum checks", d:"hard"},
+      {t:"Add structured logging to an ETL — log rows in/out per step", d:"medium"},
+      {t:"Design a data quality framework for a daily pipeline", d:"hard"},
+    ],
+    resources:[
+      {type:"video",   name:"Great Expectations tutorial — official YouTube", url:"https://www.youtube.com/watch?v=_CtCCGPCHKc"},
+      {type:"read",    name:"pytest official docs — getting started", url:"https://docs.pytest.org/en/stable/getting-started.html"},
+      {type:"read",    name:"Real Python — pytest guide", url:"https://realpython.com/pytest-python-testing/"},
+      {type:"doc",     name:"Great Expectations docs", url:"https://docs.greatexpectations.io"},
+    ]
+  },
+  {
+    day:12, week:2,
+    title:"System Design — Data Pipeline Architecture",
+    sub:"7 hrs · Senior DE interviews are 50% system design",
+    hours:[
+      {t:"9–10 AM",  topic:"Batch vs streaming pipelines",    desc:"Lambda architecture. Kappa architecture. When to use each. Trade-offs.", brk:false},
+      {t:"10–11 AM", topic:"Idempotency & exactly-once",      desc:"Why idempotency matters. Exactly-once vs at-least-once. MERGE vs INSERT.", brk:false},
+      {t:"11–12 PM", topic:"Partitioning strategies",         desc:"Time-based, hash, range partitioning. Data skew. Hot partition problem.", brk:false},
+      {t:"12–1 PM",  topic:"Lunch break",                     desc:"Rest.", brk:true},
+      {t:"1–2 PM",   topic:"SCD Types 1, 2, 3",              desc:"Slowly Changing Dimensions. Implement SCD2 in PySpark. Interview favourite.", brk:false},
+      {t:"2–3 PM",   topic:"Backfill strategies",             desc:"How to reprocess historical data. Airflow backfill. Delta time travel.", brk:false},
+      {t:"3–5 PM",   topic:"Design: end-to-end pipeline",     desc:"Design a pipeline for 1TB/day clickstream. Walk through every decision.", brk:false},
+      {t:"5–6 PM",   topic:"Practice talking through designs", desc:"Speak your design out loud. Time yourself. 20 min to explain fully.", brk:false},
+    ],
+    problems:[
+      {t:"Design a pipeline: ingest 1M events/hr from Kafka → BigQuery", d:"hard"},
+      {t:"Implement SCD Type 2 in PySpark with effective_date columns", d:"hard"},
+      {t:"Make this INSERT idempotent: what changes would you make?", d:"medium"},
+      {t:"Design a backfill for 90 days of missing data — no duplicates", d:"hard"},
+      {t:"Lambda vs Kappa — which would you choose for fraud detection?", d:"hard"},
+      {t:"How do you handle late-arriving data in a streaming pipeline?", d:"hard"},
+    ],
+    resources:[
+      {type:"video",   name:"Data Engineering System Design — Seattle Data Guy", url:"https://www.youtube.com/watch?v=e8OOPQ_FhO0"},
+      {type:"read",    name:"Fundamentals of Data Engineering — free chapters", url:"https://www.oreilly.com/library/view/fundamentals-of-data/9781098108298/"},
+      {type:"practice",name:"StrataScratch — DE system design questions", url:"https://www.stratascratch.com"},
+      {type:"read",    name:"Martin Kleppmann — Designing Data-Intensive Applications (summary)", url:"https://dataintensive.net"},
+    ]
+  },
+  {
+    day:13, week:2,
+    title:"Mock Interview Day — Coding Round",
+    sub:"6 hrs · Full simulation. Timed. No hints.",
+    hours:[
+      {t:"9–9:30 AM",topic:"Warm up",                         desc:"Solve 2 easy problems to get into coding mode. Don't skip this.", brk:false},
+      {t:"9:30–11",  topic:"Mock coding interview #1",        desc:"45 min: Python + Pandas problem. Think aloud. Write clean code. Test edge cases.", brk:false},
+      {t:"11–12 PM", topic:"Mock coding interview #2",        desc:"45 min: PySpark problem. Read requirements → design → code → explain.", brk:false},
+      {t:"12–1 PM",  topic:"Lunch break",                     desc:"Rest.", brk:true},
+      {t:"1–2 PM",   topic:"Review both solutions",           desc:"What was wrong? What was slow? How would a senior DE write it differently?", brk:false},
+      {t:"2–3 PM",   topic:"Mock coding interview #3",        desc:"45 min: Airflow DAG design + Python ETL. Combined problem.", brk:false},
+      {t:"3–5 PM",   topic:"Targeted weak area practice",     desc:"Whatever you got wrong today — do 3 more of those.", brk:false},
+      {t:"5–6 PM",   topic:"Verbal Q&A practice",             desc:"Answer 10 conceptual DE questions aloud. Record yourself if possible.", brk:false},
+    ],
+    problems:[
+      {t:"[MOCK] Clean + transform sales CSV, group by region, detect anomalies", d:"hard"},
+      {t:"[MOCK] PySpark: read Delta, SCD2 merge, window rank, write back", d:"hard"},
+      {t:"[MOCK] Write Airflow DAG: S3 sensor → Glue trigger → BQ load", d:"hard"},
+      {t:"[MOCK] Python: parse nested JSON API response into flat DataFrame", d:"medium"},
+      {t:"[MOCK] Explain your ETL architecture choices in 5 minutes", d:"hard"},
+      {t:"[MOCK] Debug this broken PySpark job — find and fix 3 bugs", d:"hard"},
+    ],
+    resources:[
+      {type:"practice",name:"Pramp — free mock interviews with real people", url:"https://www.pramp.com"},
+      {type:"practice",name:"Interviewing.io — DE mock interviews", url:"https://interviewing.io"},
+      {type:"practice",name:"StrataScratch — company-specific DE questions", url:"https://www.stratascratch.com"},
+      {type:"practice",name:"DataLemur — timed problem practice", url:"https://datalemur.com"},
+    ]
+  },
+  {
+    day:14, week:2,
+    title:"Final Day — System Design Mock + Weak Area Blitz",
+    sub:"6 hrs · You're ready. Final polish.",
+    hours:[
+      {t:"9–10 AM",  topic:"Review all notes",                desc:"Scan every day's notes. Highlight things that still feel unclear.", brk:false},
+      {t:"10–12 PM", topic:"System design mock interview",    desc:"45 min: Design a complete DE pipeline. Talk through it. No notes.", brk:false},
+      {t:"12–1 PM",  topic:"Lunch break",                     desc:"Rest. You've earned it.", brk:true},
+      {t:"1–3 PM",   topic:"Weak area blitz",                 desc:"Redo the 5 problems you got wrong this week. Fresh attempt, no peeking.", brk:false},
+      {t:"3–4 PM",   topic:"Behavioural Q&A",                 desc:"Tell me about a pipeline you built. A failure. How you handle data quality.", brk:false},
+      {t:"4–5 PM",   topic:"Final revision pass",             desc:"Key PySpark commands, Airflow patterns, AWS/GCP services. 1-page mental map.", brk:false},
+      {t:"5–6 PM",   topic:"Rest & confidence",               desc:"You've done 100+ hours of focused work. You're ready. Rest tonight.", brk:true},
+    ],
+    problems:[
+      {t:"[FINAL] Design: real-time fraud detection pipeline end-to-end", d:"hard"},
+      {t:"[FINAL] Redo your hardest problem from this week clean", d:"hard"},
+      {t:"[FINAL] Explain Delta Lake ACID + time travel in 3 minutes", d:"medium"},
+      {t:"[FINAL] Write a production Airflow DAG from memory", d:"hard"},
+      {t:"[FINAL] PySpark SCD2 implementation — no notes", d:"hard"},
+      {t:"[FINAL] Tell me about a time your pipeline broke — what did you do?", d:"medium"},
+    ],
+    resources:[
+      {type:"practice",name:"StrataScratch — final company-specific practice", url:"https://www.stratascratch.com"},
+      {type:"read",    name:"DE Interview Handbook — GitHub (free)", url:"https://github.com/andrewcbancroft/data-engineering-resources"},
+      {type:"read",    name:"Ace the Data Engineering Interview — GitBook", url:"https://www.interviewquery.com/learning-paths/data-engineering"},
+      {type:"practice",name:"DataLemur — 30 min daily practice to maintain edge", url:"https://datalemur.com"},
+    ]
+  },
+];
+
+let state = {};
+try { state = JSON.parse(localStorage.getItem('de2wk') || '{}'); } catch(e){}
+let currentDay = 0;
+
+function sk(day, type, idx) { return `d${day}_${type}_${idx}`; }
+function dayDone(d) { return state[`day_${d}`] === true; }
+
+function countDone() { return plan.filter((_,i) => dayDone(i)).length; }
+
+function updateTopBar() {
+  const done = countDone();
+  document.getElementById('top-done').textContent = done;
+  document.getElementById('top-fill').style.width = (done/14*100) + '%';
+}
+
+function save() { try { localStorage.setItem('de2wk', JSON.stringify(state)); } catch(e){} }
+
+function renderSidebar() {
+  let html = '';
+  [1,2].forEach(w => {
+    html += `<div class="sidebar-section"><div class="sidebar-label">Week ${w}</div>`;
+    plan.filter(d => d.week === w).forEach((d, idx) => {
+      const di = plan.indexOf(d);
+      const done = dayDone(di);
+      html += `<div class="day-link ${di===currentDay?'active':''} ${done?'done-link':''}" onclick="setDay(${di})">
+        <span class="dl-num">D${d.day}</span>
+        <span class="dl-name">${d.title.split('—')[0].trim()}</span>
+        <div class="dl-check ${done?'c':''}"></div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  document.getElementById('sidebar').innerHTML = html;
+}
+
+function renderMain() {
+  document.getElementById('main').innerHTML = plan.map((d, di) => `
+    <div class="day-panel ${di===currentDay?'active':''}" id="panel-${di}">
+      <div class="day-hero">
+        <div>
+          <div class="day-badge ${d.week===2?'w2':''}">Week ${d.week} · Day ${d.day}</div>
+          <div class="day-heading">${d.title}</div>
+          <div class="day-subheading">${d.sub}</div>
+        </div>
+        <button class="day-mark-btn ${dayDone(di)?'marked':''}" onclick="markDay(${di})">
+          ${dayDone(di) ? '✓ Done' : 'Mark Day Done'}
+        </button>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Hour-by-Hour Schedule</div>
+        <div class="hour-grid">
+          ${d.hours.map((h,hi) => {
+            const k = sk(di,'h',hi);
+            const done = state[k];
+            return h.brk
+              ? `<div class="hour-block hb-break">
+                  <div class="hb-time">${h.t}</div>
+                  <div class="hb-body"><div class="hb-topic">${h.topic}</div><div class="hb-desc">${h.desc}</div></div>
+                  <div></div>
+                 </div>`
+              : `<div class="hour-block ${done?'hb-done':''}" onclick="toggleSlot('${k}',this)">
+                  <div class="hb-time">${h.t}</div>
+                  <div class="hb-body"><div class="hb-topic">${h.topic}</div><div class="hb-desc">${h.desc}</div></div>
+                  <div class="hb-check ${done?'c':''}"></div>
+                 </div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Problems for Today</div>
+        <div class="problem-list">
+          ${d.problems.map((p,pi) => {
+            const k = sk(di,'p',pi);
+            const done = state[k];
+            return `<div class="problem-item ${done?'p-done':''}" onclick="toggleSlot('${k}',this)">
+              <div class="p-num">${String(pi+1).padStart(2,'0')}</div>
+              <div class="p-body">
+                <div class="p-text">${p.t}</div>
+                <span class="p-diff ${p.d}">${p.d}</span>
+              </div>
+              <div class="p-check ${done?'c':''}"></div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Resources</div>
+        <div class="resource-grid">
+          ${d.resources.map(r => `
+            <div class="resource-item">
+              <span class="r-type r-${r.type}">${r.type}</span>
+              <span class="r-name">${r.name}</span>
+              <a class="r-link" href="${r.url}" target="_blank">open →</a>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">My Notes</div>
+        <div class="notes-box">
+          <textarea placeholder="What did you learn today? What was hard? What to revisit?" onchange="saveNote(${di}, this.value)">${state['note_'+di]||''}</textarea>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function setDay(di) {
+  currentDay = di;
+  document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.day-link').forEach(l => l.classList.remove('active'));
+  const panel = document.getElementById('panel-'+di);
+  if(panel) panel.classList.add('active');
+  renderSidebar();
+  window.scrollTo(0,0);
+}
+
+function toggleSlot(k, el) {
+  state[k] = !state[k];
+  save();
+  const isCheck = el.classList.contains('hour-block');
+  if(isCheck) {
+    el.classList.toggle('hb-done', state[k]);
+    el.querySelector('.hb-check').classList.toggle('c', state[k]);
+  } else {
+    el.classList.toggle('p-done', state[k]);
+    el.querySelector('.p-check').classList.toggle('c', state[k]);
+  }
+}
+
+function markDay(di) {
+  state['day_'+di] = !state['day_'+di];
+  save();
+  updateTopBar();
+  renderSidebar();
+  const btn = document.querySelector(`#panel-${di} .day-mark-btn`);
+  if(btn) { btn.classList.toggle('marked', state['day_'+di]); btn.textContent = state['day_'+di] ? '✓ Done' : 'Mark Day Done'; }
+}
+
+function saveNote(di, val) { state['note_'+di] = val; save(); }
+
+renderSidebar();
+renderMain();
+updateTopBar();
+</script>
+</body>
+</html>

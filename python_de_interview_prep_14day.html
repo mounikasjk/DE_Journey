@@ -1,0 +1,545 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --bg:#0f1117;--bg2:#161b27;--bg3:#1e2535;--border:#2a3045;
+    --accent:#4f9eff;--accent2:#7c5cbf;--green:#2ecc71;--amber:#f39c12;--red:#e74c3c;
+    --text:#e8eaf6;--muted:#8892a4;--tag-bg:#1e2535;
+  }
+  body{background:transparent;color:var(--text);font-family:'Sora',sans-serif;font-size:14px;}
+  .root{padding:1rem 0;}
+  .header{display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;}
+  .logo{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#fff;flex-shrink:0;}
+  .header-text h1{font-size:17px;font-weight:700;color:var(--text);line-height:1.2;}
+  .header-text p{font-size:12px;color:var(--muted);margin-top:2px;}
+  .week-tabs{display:flex;gap:8px;margin-bottom:1rem;}
+  .week-tab{padding:6px 18px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);cursor:pointer;font-family:'Sora',sans-serif;font-size:12px;font-weight:500;transition:all .15s;}
+  .week-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .days-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem;}
+  .day-btn{padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;transition:all .15s;}
+  .day-btn.active{background:var(--bg3);border-color:var(--accent);color:var(--accent);}
+  .day-btn.done{border-color:var(--green);color:var(--green);}
+  .day-btn:hover:not(.active){border-color:var(--muted);}
+  .day-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+  .day-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--bg3);}
+  .day-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+  .day-title{font-size:15px;font-weight:600;color:var(--text);}
+  .day-badge{margin-left:auto;font-size:10px;padding:3px 10px;border-radius:20px;font-weight:500;}
+  .badge-core{background:rgba(79,158,255,.15);color:var(--accent);}
+  .badge-de{background:rgba(124,92,191,.15);color:#a07ee8;}
+  .day-body{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+  .section{padding:14px 18px;border-right:1px solid var(--border);}
+  .section:last-child{border-right:none;}
+  .section-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;}
+  .dot.g{background:var(--green);}
+  .dot.a{background:var(--amber);}
+  .schedule-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;font-size:12px;}
+  .time-badge{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);background:rgba(79,158,255,.1);padding:2px 7px;border-radius:4px;white-space:nowrap;flex-shrink:0;margin-top:1px;}
+  .time-badge.g{color:var(--green);background:rgba(46,204,113,.1);}
+  .time-badge.a{color:var(--amber);background:rgba(243,156,18,.1);}
+  .schedule-text{color:var(--text);line-height:1.45;}
+  .prob-item{display:flex;align-items:flex-start;gap:7px;margin-bottom:7px;font-size:12px;color:var(--text);line-height:1.4;}
+  .prob-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);flex-shrink:0;padding-top:1px;}
+  .res-card{border:1px solid var(--border);border-radius:8px;padding:9px 12px;margin-bottom:8px;cursor:pointer;transition:border-color .15s;}
+  .res-card:hover{border-color:var(--accent);}
+  .res-type{font-size:9px;text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:3px;}
+  .res-type.learn{color:var(--accent);}
+  .res-type.practice{color:var(--green);}
+  .res-name{font-size:12px;color:var(--text);font-weight:500;}
+  .res-desc{font-size:11px;color:var(--muted);margin-top:2px;}
+  .bottom-bar{margin-top:1rem;padding:10px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted);}
+  .progress-wrap{display:flex;align-items:center;gap:8px;}
+  .prog-bar{width:120px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;}
+  .prog-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .3s;}
+  .tip{font-family:'JetBrains Mono',monospace;font-size:10px;}
+  @media(max-width:600px){.day-body{grid-template-columns:1fr;}.section{border-right:none;border-bottom:1px solid var(--border);}}
+  .section-full{grid-column:1/-1;padding:14px 18px;border-top:1px solid var(--border);}
+  .res-link{font-size:10px;color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace;}
+</style>
+
+<div class="root">
+  <div class="header">
+    <div class="logo">py</div>
+    <div class="header-text">
+      <h1>Python for Data Engineering — 14-Day Interview Prep</h1>
+      <p>Hour-by-hour schedule · problems · resources for every day</p>
+    </div>
+  </div>
+
+  <div class="week-tabs">
+    <button class="week-tab active" onclick="setWeek(1)">Week 1 — Core Python + Data Manipulation</button>
+    <button class="week-tab" onclick="setWeek(2)">Week 2 — DE-Specific + Interview Ready</button>
+  </div>
+
+  <div class="days-row" id="days-row"></div>
+  <div class="day-card" id="day-card"></div>
+
+  <div class="bottom-bar">
+    <div class="progress-wrap">
+      <span>Progress</span>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:7%"></div></div>
+      <span id="prog-label">Day 1 / 14</span>
+    </div>
+    <span class="tip" id="tip-text">⏱ 6–7 hrs/day recommended</span>
+  </div>
+</div>
+
+<script>
+const data = {
+  1:{
+    title:"Python Fundamentals Refresher",badge:"core",
+    schedule:[
+      {t:"7–8 AM",c:"Lists, tuples, dicts, sets — mutation rules & comprehensions"},
+      {t:"8–9 AM",c:"Functions: *args, **kwargs, lambda, map/filter/zip"},
+      {t:"9–10 AM",c:"String ops, f-strings, slicing — common DE text transforms"},
+      {t:"10–11 AM",g:true,c:"LeetCode: Two Sum, Valid Anagram, Group Anagrams"},
+      {t:"11–12 PM",c:"Generators, itertools, enumerate — memory-efficient loops"},
+      {t:"1–2 PM",c:"Context managers (with), comprehensions advanced patterns"},
+      {t:"2–3 PM",a:true,c:"Practice: 5 HackerRank Python Easy problems"},
+    ],
+    problems:[
+      "Two Sum (dict lookup pattern)",
+      "Valid Anagram (Counter vs sort)",
+      "Group Anagrams (defaultdict)",
+      "Flatten nested list (recursion)",
+      "Find duplicates in list (set trick)",
+      "Rotate list by k positions",
+    ],
+    resources:[
+      {type:"learn",name:"Real Python — Python Basics",desc:"python.org + realpython.com/tutorials/basics",url:"https://realpython.com/tutorials/basics/"},
+      {type:"learn",name:"Python Cheatsheet (gto76)",desc:"Comprehensive single-page reference",url:"https://github.com/gto76/python-cheatsheet"},
+      {type:"practice",name:"HackerRank Python Track",desc:"Python Easy section — 30 warmup problems",url:"https://www.hackerrank.com/domains/python"},
+      {type:"practice",name:"LeetCode Easy Filter → Python",desc:"Sort by Acceptance, filter Arrays",url:"https://leetcode.com/problemset/?difficulty=EASY&page=1"},
+    ]
+  },
+  2:{
+    title:"Data Structures & Algorithms for DE",badge:"core",
+    schedule:[
+      {t:"7–8 AM",c:"Stacks & queues — deque, heapq for streaming data"},
+      {t:"8–9 AM",c:"Hash maps deep dive: collision, load factor, defaultdict"},
+      {t:"9–10 AM",c:"Sorting: timsort internals, custom key functions"},
+      {t:"10–11 AM",g:true,c:"LeetCode: Top K Frequent, Find Median (heaps)"},
+      {t:"11–12 PM",c:"Binary search on data — finding thresholds in sorted feeds"},
+      {t:"1–2 PM",c:"Sliding window & two-pointer on time-series data"},
+      {t:"2–3 PM",a:true,c:"Practice: 4 medium problems on arrays/hashmaps"},
+    ],
+    problems:[
+      "Top K Frequent Elements (heapq)",
+      "Sliding Window Maximum (deque)",
+      "LRU Cache implementation (OrderedDict)",
+      "Find duplicates in large CSV (bloom filter concept)",
+      "Merge sorted streams (heapq.merge)",
+      "Detect data anomalies (z-score with deque)",
+    ],
+    resources:[
+      {type:"learn",name:"Neetcode.io — DSA Roadmap",desc:"Best structured DSA course for interviews",url:"https://neetcode.io/roadmap"},
+      {type:"learn",name:"heapq & collections docs",desc:"Python official — heapq, deque, Counter, defaultdict",url:"https://docs.python.org/3/library/collections.html"},
+      {type:"practice",name:"LeetCode Medium — Arrays & Hashing",desc:"Focus on Top K, sliding window problems",url:"https://leetcode.com/tag/hash-table/"},
+      {type:"practice",name:"NeetCode 150 List",desc:"Curated 150 problems by category",url:"https://neetcode.io/practice"},
+    ]
+  },
+  3:{
+    title:"File I/O — CSV, JSON, Parquet, Excel",badge:"core",
+    schedule:[
+      {t:"7–8 AM",c:"csv module: DictReader, DictWriter, quoting, encoding"},
+      {t:"8–9 AM",c:"json module: load/dump, custom encoders, streaming JSON"},
+      {t:"9–10 AM",c:"pathlib deep dive — path manipulation for pipeline file handling"},
+      {t:"10–11 AM",g:true,c:"Project: Build a CSV→JSON batch converter with error handling"},
+      {t:"11–12 PM",c:"Parquet with pyarrow: schema, partitioning, predicate pushdown"},
+      {t:"1–2 PM",c:"openpyxl / xlrd for Excel; reading multi-sheet workbooks"},
+      {t:"2–3 PM",a:true,c:"Practice: ETL script reading 3 file formats into dict"},
+    ],
+    problems:[
+      "Parse malformed CSV (skip bad rows, log errors)",
+      "Merge multiple JSON files into one (streaming)",
+      "Convert CSV partitions to Parquet by date",
+      "Read Excel with multi-row headers into dict",
+      "Find largest file in directory tree (pathlib)",
+      "Write chunked CSV for large datasets (generator)",
+    ],
+    resources:[
+      {type:"learn",name:"Real Python — Working with Files",desc:"csv, json, pathlib, os.path complete guide",url:"https://realpython.com/working-with-files-in-python/"},
+      {type:"learn",name:"PyArrow Parquet docs",desc:"Official guide: read/write Parquet, partitioning",url:"https://arrow.apache.org/docs/python/parquet.html"},
+      {type:"practice",name:"Python File I/O Exercises (w3resource)",desc:"40+ file handling exercises with solutions",url:"https://www.w3resource.com/python-exercises/file/"},
+      {type:"practice",name:"Kaggle DE starter notebooks",desc:"ETL exercises with real-world file formats",url:"https://www.kaggle.com/search?q=data+engineering+python"},
+    ]
+  },
+  4:{
+    title:"Pandas Fundamentals",badge:"core",
+    schedule:[
+      {t:"7–8 AM",c:"DataFrame creation: from dict, CSV, SQL, JSON — dtypes & memory"},
+      {t:"8–9 AM",c:"Indexing: loc, iloc, at, boolean masking, query()"},
+      {t:"9–10 AM",c:"groupby: agg, transform, apply — the DE workhorse"},
+      {t:"10–11 AM",g:true,c:"Project: Analyze a financial CSV — daily vol, PnL by asset"},
+      {t:"11–12 PM",c:"merge vs join vs concat — all join types with edge cases"},
+      {t:"1–2 PM",c:"Missing data: fillna, dropna, interpolate — strategies"},
+      {t:"2–3 PM",a:true,c:"Pandas exercises: 10 problems from exercises.rip"},
+    ],
+    problems:[
+      "Group FX ticks by 1-min intervals and compute OHLC",
+      "Find rows where price moved > 2 std devs",
+      "Left join two DataFrames, flag unmatched rows",
+      "Pivot table: sales by region × product",
+      "Rolling 7-day average on time series",
+      "Detect and fill forward-fill gaps in time series",
+    ],
+    resources:[
+      {type:"learn",name:"Pandas Official 10 Minutes",desc:"Best official quickstart — must complete fully",url:"https://pandas.pydata.org/docs/user_guide/10min.html"},
+      {type:"learn",name:"Real Python Pandas Tutorials",desc:"groupby, merge, time series — 3 deep dives",url:"https://realpython.com/pandas-groupby/"},
+      {type:"practice",name:"pandas-exercises (GitHub)",desc:"100+ exercises by jvns/guipsamora — with solutions",url:"https://github.com/guipsamora/pandas_exercises"},
+      {type:"practice",name:"exercises.rip — Pandas",desc:"Interactive pandas problem set, browser-based",url:"https://exercises.rip/"},
+    ]
+  },
+  5:{
+    title:"Pandas Advanced + NumPy",badge:"core",
+    schedule:[
+      {t:"7–8 AM",c:"vectorized ops: avoid loops, use .apply only when necessary"},
+      {t:"8–9 AM",c:"NumPy arrays: broadcasting, fancy indexing, np.where"},
+      {t:"9–10 AM",c:"Time series: DatetimeIndex, resample, tz_convert, shift"},
+      {t:"10–11 AM",g:true,c:"Project: Resample FX ticks to multiple timeframes"},
+      {t:"11–12 PM",c:"pandas eval/query for performance; Categorical dtype"},
+      {t:"1–2 PM",c:"Memory optimization: downcast dtypes, sparse arrays"},
+      {t:"2–3 PM",a:true,c:"Practice: 8 medium pandas problems on Kaggle notebooks"},
+    ],
+    problems:[
+      "Vectorized Z-score normalization (no loops)",
+      "Resample ticks: 1m, 5m, 1h OHLCV bars",
+      "np.where to flag outliers across 1M rows",
+      "Reduce DataFrame memory by 60% via dtypes",
+      "Rolling correlation between two assets",
+      "Align two DataFrames on nearest timestamp (merge_asof)",
+    ],
+    resources:[
+      {type:"learn",name:"NumPy Quickstart Tutorial",desc:"Official guide: arrays, broadcasting, indexing",url:"https://numpy.org/doc/stable/user/quickstart.html"},
+      {type:"learn",name:"pandas Time Series docs",desc:"Complete guide: resample, rolling, DatetimeIndex",url:"https://pandas.pydata.org/docs/user_guide/timeseries.html"},
+      {type:"practice",name:"Kaggle Pandas course (free)",desc:"7 lessons with inline exercises — very hands-on",url:"https://www.kaggle.com/learn/pandas"},
+      {type:"practice",name:"NumPy 100 exercises (GitHub)",desc:"rougier/numpy-100 — all levels, answers included",url:"https://github.com/rougier/numpy-100"},
+    ]
+  },
+  6:{
+    title:"Database Connectivity",badge:"core",
+    schedule:[
+      {t:"7–8 AM",c:"pyodbc: connect strings, cursor, executemany for bulk inserts"},
+      {t:"8–9 AM",c:"SQLAlchemy Core: engine, connection, text(), metadata"},
+      {t:"9–10 AM",c:"pandas read_sql / to_sql — with chunksize for large tables"},
+      {t:"10–11 AM",g:true,c:"Project: Python ETL → SQL Server via pyodbc + bulk insert"},
+      {t:"11–12 PM",c:"Snowflake connector: staging, COPY INTO, warehouse resume"},
+      {t:"1–2 PM",c:"Connection pooling, retry logic, parameterized queries (SQL injection)"},
+      {t:"2–3 PM",a:true,c:"Practice: Write 3 Python DB scripts from scratch"},
+    ],
+    problems:[
+      "Bulk insert 100k rows via executemany (benchmark vs loop)",
+      "Read SQL in 10k-row chunks, transform, write to Parquet",
+      "Retry wrapper with exponential backoff for DB calls",
+      "Parameterized stored procedure call from Python",
+      "Snowflake: stage CSV → COPY INTO → query result",
+      "SQLAlchemy: reflect existing table, run dynamic query",
+    ],
+    resources:[
+      {type:"learn",name:"pyodbc wiki — Microsoft SQL Server",desc:"Connection strings, bulk ops, best practices",url:"https://github.com/mkleehammer/pyodbc/wiki/Connecting-to-SQL-Server-from-Windows"},
+      {type:"learn",name:"SQLAlchemy Core Tutorial",desc:"Official — engines, connections, transactions",url:"https://docs.sqlalchemy.org/en/20/core/tutorial.html"},
+      {type:"practice",name:"Snowflake Python Connector docs",desc:"COPY INTO, stage, warehouse, examples",url:"https://docs.snowflake.com/en/developer-guide/python-connector/python-connector"},
+      {type:"practice",name:"Mode Analytics SQL Practice",desc:"Real SQL problems on live datasets",url:"https://mode.com/sql-tutorial/"},
+    ]
+  },
+  7:{
+    title:"OOP, Error Handling, Logging, Decorators",badge:"core",
+    schedule:[
+      {t:"7–8 AM",c:"Classes: __init__, @property, @staticmethod, @classmethod, __repr__"},
+      {t:"8–9 AM",c:"Exception hierarchy: custom exceptions, try/except/finally best practices"},
+      {t:"9–10 AM",c:"logging module: handlers, formatters, rotating file handler, levels"},
+      {t:"10–11 AM",g:true,c:"Build: PipelineLogger class with rotating handler + email alert"},
+      {t:"11–12 PM",c:"Decorators: @retry, @timer, @validate_schema — real DE patterns"},
+      {t:"1–2 PM",c:"dataclasses, typing module, Pydantic v2 for data validation"},
+      {t:"2–3 PM",a:true,c:"Week 1 review: redo 5 hardest problems from earlier days"},
+    ],
+    problems:[
+      "Design a DataPipeline class with run/rollback methods",
+      "@retry decorator with max_attempts + exponential backoff",
+      "@timer decorator logging execution time",
+      "Custom ValidationError hierarchy for bad records",
+      "Pydantic model for FX tick validation with constraints",
+      "logging config that writes to file + console simultaneously",
+    ],
+    resources:[
+      {type:"learn",name:"Real Python OOP in Python",desc:"Classes, inheritance, magic methods — complete",url:"https://realpython.com/python3-object-oriented-programming/"},
+      {type:"learn",name:"Pydantic v2 docs — Concepts",desc:"Data validation, models, validators for DE",url:"https://docs.pydantic.dev/latest/concepts/models/"},
+      {type:"practice",name:"Python OOP exercises (w3schools)",desc:"30 OOP problems with solutions",url:"https://www.w3schools.com/python/python_classes.asp"},
+      {type:"practice",name:"Real Python Decorators tutorial",desc:"Primer with exercises and real patterns",url:"https://realpython.com/primer-on-python-decorators/"},
+    ]
+  },
+  8:{
+    title:"ETL Pipeline Design Patterns",badge:"de",
+    schedule:[
+      {t:"7–8 AM",c:"Extract patterns: incremental load, watermarks, CDC basics"},
+      {t:"8–9 AM",c:"Transform: pipeline chaining, functional style, immutability"},
+      {t:"9–10 AM",c:"Load strategies: upsert, SCD Type 1 & 2, idempotency"},
+      {t:"10–11 AM",g:true,c:"Build: Full Python ETL — FX API → pandas → SQL Server"},
+      {t:"11–12 PM",c:"Configuration management: YAML/TOML config, dotenv, secrets"},
+      {t:"1–2 PM",c:"Pipeline observability: metrics, lineage, run metadata logging"},
+      {t:"2–3 PM",a:true,c:"Interview Q&A: 10 DE pipeline design questions out loud"},
+    ],
+    problems:[
+      "Implement watermark-based incremental extract",
+      "SCD Type 2 merge logic in pandas (before SQL step)",
+      "Idempotent load: DELETE+INSERT vs MERGE pattern",
+      "Config loader: YAML with env var override",
+      "Pipeline run tracker: write start/end/status to DB",
+      "Generic extract-transform-load class hierarchy",
+    ],
+    resources:[
+      {type:"learn",name:"Fundamentals of Data Engineering (O'Reilly)",desc:"Chapters 8-9: ingestion & transformation patterns",url:"https://www.oreilly.com/library/view/fundamentals-of-data/9781098108298/"},
+      {type:"learn",name:"python-dotenv + dynaconf docs",desc:"Config management for DE pipelines",url:"https://www.dynaconf.com/"},
+      {type:"practice",name:"DE Zoomcamp GitHub (DataTalks)",desc:"Week 1-2: Python ETL projects hands-on",url:"https://github.com/DataTalksClub/data-engineering-zoomcamp"},
+      {type:"practice",name:"Awesome Data Engineering repo",desc:"Curated project ideas and open source DE tools",url:"https://github.com/igorbarinov/awesome-data-engineering"},
+    ]
+  },
+  9:{
+    title:"PySpark Basics",badge:"de",
+    schedule:[
+      {t:"7–8 AM",c:"SparkSession setup, RDD vs DataFrame API — when to use what"},
+      {t:"8–9 AM",c:"Transformations vs actions: lazy evaluation — critical for interviews"},
+      {t:"9–10 AM",c:"groupBy, agg, join, window functions in PySpark"},
+      {t:"10–11 AM",g:true,c:"Project: Replicate Day 4 pandas logic in PySpark"},
+      {t:"11–12 PM",c:"Reading/writing: Parquet, Delta, JDBC from Spark"},
+      {t:"1–2 PM",c:"Optimization: partitioning, broadcast join, caching, explain()"},
+      {t:"2–3 PM",a:true,c:"Practice: 3 PySpark problems on Databricks Community"},
+    ],
+    problems:[
+      "Count records per partition in a large Parquet dataset",
+      "Window function: rank trades by volume within symbol",
+      "Broadcast join: small lookup table to large fact table",
+      "Incremental read: filter by partition date",
+      "Convert pandas UDF to native Spark aggregate",
+      "Explain plan analysis: spot shuffle bottleneck",
+    ],
+    resources:[
+      {type:"learn",name:"PySpark official docs — Getting Started",desc:"SparkSession, DataFrame, SQL guide",url:"https://spark.apache.org/docs/latest/api/python/getting_started/index.html"},
+      {type:"learn",name:"Databricks Academy (free tier)",desc:"PySpark fundamentals course — interactive notebooks",url:"https://www.databricks.com/learn/training/catalog"},
+      {type:"practice",name:"Databricks Community Edition",desc:"Free Spark cluster — run PySpark notebooks live",url:"https://community.cloud.databricks.com/"},
+      {type:"practice",name:"LeetCode PySpark problems",desc:"New SQL/PySpark section — pandas-compatible",url:"https://leetcode.com/problemset/?page=1&topicSlugs=pandas"},
+    ]
+  },
+  10:{
+    title:"Airflow DAGs in Python",badge:"de",
+    schedule:[
+      {t:"7–8 AM",c:"DAG anatomy: dag_id, schedule, default_args, catchup"},
+      {t:"8–9 AM",c:"Operators: PythonOperator, BashOperator, SQLExecuteQueryOperator"},
+      {t:"9–10 AM",c:"XComs, TaskFlow API (@task decorator), dynamic task mapping"},
+      {t:"10–11 AM",g:true,c:"Build: FX pipeline DAG — extract→transform→load→alert"},
+      {t:"11–12 PM",c:"Connections, Variables, Hooks — separation of config from code"},
+      {t:"1–2 PM",c:"Debugging: task logs, backfill, clear+rerun, sensor patterns"},
+      {t:"2–3 PM",a:true,c:"Interview Qs: 10 Airflow questions (scheduling, XCom, retry)"},
+    ],
+    problems:[
+      "Build DAG with 4 tasks and branching on row count",
+      "Use XCom to pass row count between tasks",
+      "Sensor DAG: wait for file to land before processing",
+      "Dynamic task mapping: parallel load for 5 currencies",
+      "On-failure callback: send Slack alert via hook",
+      "Backfill strategy: idempotent DAG from scratch",
+    ],
+    resources:[
+      {type:"learn",name:"Astronomer — Learn Airflow (free)",desc:"Best free Airflow course — interactive, thorough",url:"https://academy.astronomer.io/"},
+      {type:"learn",name:"Apache Airflow official docs",desc:"DAGs, TaskFlow API, Operators, Hooks",url:"https://airflow.apache.org/docs/apache-airflow/stable/"},
+      {type:"practice",name:"Astro CLI (local Airflow)",desc:"Run full Airflow locally — build and test DAGs",url:"https://docs.astronomer.io/astro/cli/install-cli"},
+      {type:"practice",name:"Airflow DAG examples (GitHub)",desc:"apache/airflow example_dags — real-world patterns",url:"https://github.com/apache/airflow/tree/main/airflow/example_dags"},
+    ]
+  },
+  11:{
+    title:"APIs + REST Data Ingestion",badge:"de",
+    schedule:[
+      {t:"7–8 AM",c:"requests: sessions, headers, auth, timeouts, retries (HTTPAdapter)"},
+      {t:"8–9 AM",c:"Pagination patterns: cursor, page+limit, link header"},
+      {t:"9–10 AM",c:"Rate limiting: token bucket, backoff, respect Retry-After"},
+      {t:"10–11 AM",g:true,c:"Build: Pull FX rates from a public API, store to Parquet"},
+      {t:"11–12 PM",c:"Async ingestion: asyncio + aiohttp for parallel API calls"},
+      {t:"1–2 PM",c:"Webhook receiver (Flask/FastAPI) — receive push data"},
+      {t:"2–3 PM",a:true,c:"Practice: Write 3 API ingestion scripts for public APIs"},
+    ],
+    problems:[
+      "Paginate through all pages of a REST API with cursor",
+      "Rate-limit-aware fetcher: 10 req/sec with token bucket",
+      "Async fetch 50 endpoints concurrently with aiohttp",
+      "Retry on 429/503 with exponential backoff + jitter",
+      "Parse nested JSON API response to flat DataFrame",
+      "Simple FastAPI webhook: receive, validate, store payload",
+    ],
+    resources:[
+      {type:"learn",name:"Real Python — requests library",desc:"Complete guide: auth, sessions, retry, streaming",url:"https://realpython.com/python-requests/"},
+      {type:"learn",name:"aiohttp docs — Client quickstart",desc:"Async HTTP for high-volume API ingestion",url:"https://docs.aiohttp.org/en/stable/client_quickstart.html"},
+      {type:"practice",name:"Public APIs list (GitHub)",desc:"500+ free APIs to practice ingestion against",url:"https://github.com/public-apis/public-apis"},
+      {type:"practice",name:"FastAPI tutorial — official",desc:"Build a webhook receiver in 30 minutes",url:"https://fastapi.tiangolo.com/tutorial/"},
+    ]
+  },
+  12:{
+    title:"Testing + Data Quality",badge:"de",
+    schedule:[
+      {t:"7–8 AM",c:"pytest fundamentals: fixtures, parametrize, markers, conftest.py"},
+      {t:"8–9 AM",c:"Mocking: unittest.mock, patch, MagicMock — mock DB calls"},
+      {t:"9–10 AM",c:"Great Expectations basics: expectations, checkpoints, data docs"},
+      {t:"10–11 AM",g:true,c:"Build: Test suite for Day 8 ETL pipeline (8+ test cases)"},
+      {t:"11–12 PM",c:"Data quality checks: null%, uniqueness, referential integrity"},
+      {t:"1–2 PM",c:"Type hints + mypy — enforcing contracts in DE code"},
+      {t:"2–3 PM",a:true,c:"Practice: Add tests to a previous project from Days 3–6"},
+    ],
+    problems:[
+      "Test extract function with mocked HTTP response",
+      "Parametrize transform tests over 5 edge-case inputs",
+      "Fixture: in-memory SQLite DB for integration tests",
+      "GE expectation: column not null, values in set",
+      "Detect duplicate primary keys in loaded data",
+      "mypy: add type hints to Day 7 DataPipeline class",
+    ],
+    resources:[
+      {type:"learn",name:"pytest docs — Getting Started",desc:"Official guide: fixtures, marks, parametrize",url:"https://docs.pytest.org/en/stable/getting-started.html"},
+      {type:"learn",name:"Great Expectations — Core Concepts",desc:"Expectations, suites, checkpoints, data docs",url:"https://docs.greatexpectations.io/docs/core/introduction/"},
+      {type:"practice",name:"Real Python — Testing with pytest",desc:"Comprehensive tutorial with exercises",url:"https://realpython.com/pytest-python-testing/"},
+      {type:"practice",name:"testdriven.io — DE Testing course",desc:"pytest + mock for data pipelines (paid but worth it)",url:"https://testdriven.io/"},
+    ]
+  },
+  13:{
+    title:"Performance + Concurrency",badge:"de",
+    schedule:[
+      {t:"7–8 AM",c:"Profiling: cProfile, line_profiler, memory_profiler — find bottlenecks"},
+      {t:"8–9 AM",c:"multiprocessing: Pool, Queue — CPU-bound DE transforms"},
+      {t:"9–10 AM",c:"concurrent.futures: ThreadPoolExecutor for I/O-bound tasks"},
+      {t:"10–11 AM",g:true,c:"Build: Parallel file processor — 10 Parquet files concurrently"},
+      {t:"11–12 PM",c:"Chunked processing: generators for 100M row datasets"},
+      {t:"1–2 PM",c:"Polars vs pandas: when to switch (1B row benchmarks)"},
+      {t:"2–3 PM",a:true,c:"Optimize Day 5 pandas script — target 3x speedup"},
+    ],
+    problems:[
+      "Profile a slow transform, fix the top 3 bottlenecks",
+      "ThreadPoolExecutor: parallel API calls for 20 symbols",
+      "multiprocessing Pool: transform 8 CSV files in parallel",
+      "Generator pipeline: process 10M rows without RAM spike",
+      "Benchmark Polars vs pandas on 10M row groupby",
+      "Chunk-wise SQL read into Parquet (no full table in RAM)",
+    ],
+    resources:[
+      {type:"learn",name:"Real Python — Speed up Python",desc:"Profiling, multiprocessing, asyncio guide",url:"https://realpython.com/python-concurrency/"},
+      {type:"learn",name:"Polars User Guide",desc:"Fast DE alternative to pandas — growing in interviews",url:"https://docs.pola.rs/user-guide/"},
+      {type:"practice",name:"Python Performance benchmarks",desc:"pyperformance — benchmark suite to optimize against",url:"https://github.com/python/pyperformance"},
+      {type:"practice",name:"Exercism — Python track",desc:"Hard Python exercises with mentor feedback",url:"https://exercism.org/tracks/python"},
+    ]
+  },
+  14:{
+    title:"Mock Interview + Full System Design",badge:"de",
+    schedule:[
+      {t:"7–8 AM",c:"Review: weakest 3 topics — redo 2 problems from each"},
+      {t:"8–9 AM",c:"System design: design a real-time FX pricing pipeline end to end"},
+      {t:"9–10 AM",c:"Behavioral: STAR answers for DE projects (use your ICE/Airflow work)"},
+      {t:"10–11 AM",g:true,c:"Mock: Solve 3 DE coding problems under timed conditions (45 min each)"},
+      {t:"11–12 PM",c:"Code review practice: spot bugs in 5 DE Python scripts"},
+      {t:"1–2 PM",c:"SQL + Python combo Qs: write Python that generates T-SQL"},
+      {t:"2–3 PM",a:true,c:"Final: Record yourself answering 5 DE interview questions"},
+    ],
+    problems:[
+      "Design: pipeline for 1M FX ticks/day — Python architecture",
+      "Debug: broken ETL script (6 injected bugs to find)",
+      "Optimize: slow groupby taking 4 mins on 50M rows",
+      "Write Python + SQL: detect and remove duplicates end-to-end",
+      "API + DB: ingest from REST → transform → upsert SQL Server",
+      "Live: implement a mini-pipeline in 30 mins from scratch",
+    ],
+    resources:[
+      {type:"learn",name:"Exponent — DE Interview Guide",desc:"System design + behavioral for DE roles",url:"https://www.tryexponent.com/guides/data-engineering"},
+      {type:"learn",name:"DataEngineer.io Interview Prep",desc:"Real interview questions from FAANG DE roles",url:"https://www.dataengineer.io/"},
+      {type:"practice",name:"Pramp — Mock Interviews (free)",desc:"Peer mock interviews: coding + system design",url:"https://www.pramp.com/"},
+      {type:"practice",name:"interviewing.io",desc:"Anonymous mock interviews with senior engineers",url:"https://interviewing.io/"},
+    ]
+  }
+};
+
+let week=1, day=1;
+
+function setWeek(w){
+  week=w;
+  day=w===1?1:8;
+  document.querySelectorAll('.week-tab').forEach((t,i)=>t.classList.toggle('active',i===w-1));
+  render();
+}
+
+function setDay(d){
+  day=d;
+  render();
+}
+
+function badgeClass(b){return b==='core'?'badge-core':'badge-de';}
+function badgeLabel(b){return b==='core'?'Core Python':'DE Specialist';}
+
+function render(){
+  const days=week===1?[1,2,3,4,5,6,7]:[8,9,10,11,12,13,14];
+  const row=document.getElementById('days-row');
+  row.innerHTML=days.map(d=>`<button class="day-btn${d===day?' active':''}" onclick="setDay(${d})">Day ${d}</button>`).join('');
+  
+  const d=data[day];
+  const card=document.getElementById('day-card');
+  
+  const schedHTML=d.schedule.map(s=>`
+    <div class="schedule-row">
+      <span class="time-badge${s.g?' g':s.a?' a':''}">${s.t}</span>
+      <span class="schedule-text">${s.c}</span>
+    </div>`).join('');
+  
+  const probHTML=d.problems.map((p,i)=>`
+    <div class="prob-item">
+      <span class="prob-num">${String(i+1).padStart(2,'0')}.</span>
+      <span>${p}</span>
+    </div>`).join('');
+  
+  const resHTML=d.resources.map(r=>`
+    <div class="res-card" onclick="openLink('${r.url}')">
+      <div class="res-type ${r.type}">${r.type==='learn'?'▶ Learn':'⚡ Practice'}</div>
+      <div class="res-name">${r.name}</div>
+      <div class="res-desc">${r.desc}</div>
+    </div>`).join('');
+  
+  card.innerHTML=`
+    <div class="day-header">
+      <div>
+        <div class="day-num">Day ${day} of 14</div>
+        <div class="day-title">${d.title}</div>
+      </div>
+      <span class="day-badge ${badgeClass(d.badge)}">${badgeLabel(d.badge)}</span>
+    </div>
+    <div class="day-body">
+      <div class="section">
+        <div class="section-title"><span class="dot"></span>Hour-by-Hour Schedule</div>
+        ${schedHTML}
+        <div style="margin-top:8px;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;">
+          <span style="color:var(--accent)">■</span> Learn &nbsp;
+          <span style="color:var(--green)">■</span> Practice &nbsp;
+          <span style="color:var(--amber)">■</span> Build/Review
+        </div>
+      </div>
+      <div class="section" style="border-right:none;">
+        <div class="section-title"><span class="dot a"></span>Problems to Solve</div>
+        ${probHTML}
+      </div>
+    </div>
+    <div class="section-full">
+      <div class="section-title" style="margin-bottom:12px;"><span class="dot g"></span>Resources — Learn + Practice</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        ${resHTML}
+      </div>
+    </div>`;
+  
+  document.getElementById('prog-fill').style.width=`${(day/14*100).toFixed(0)}%`;
+  document.getElementById('prog-label').textContent=`Day ${day} / 14`;
+  
+  const tips=[
+    '⏱ Code every single block — no passive reading',
+    '🔁 Each day builds on the last — don\'t skip',
+    '📝 Keep a mistakes log for interview review',
+    '💡 Use your ICE/Airflow projects as STAR examples',
+    '🧪 Run every code snippet yourself in a notebook',
+  ];
+  document.getElementById('tip-text').textContent=tips[day%tips.length];
+}
+
+render();
+</script>
