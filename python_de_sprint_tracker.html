@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mounika's Python DE Sprint</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0C0C0F;
+    --surface: #141418;
+    --surface2: #1C1C22;
+    --border: #2A2A35;
+    --accent: #00E5A0;
+    --accent2: #6C63FF;
+    --accent3: #FF6B6B;
+    --warn: #FFB547;
+    --text: #F0EFF5;
+    --text2: #9994B0;
+    --text3: #5C5875;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  /* HEADER */
+  .header {
+    max-width: 860px;
+    margin: 0 auto 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 1rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+  }
+  .header-left h1 {
+    font-family: var(--mono);
+    font-size: clamp(1.2rem, 3vw, 1.6rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .header-left h1 span { color: var(--accent); }
+  .header-left p {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 4px;
+    font-weight: 300;
+  }
+  .header-right {
+    text-align: right;
+  }
+  .overall-pct {
+    font-family: var(--mono);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .overall-label { font-size: 12px; color: var(--text3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* MASTER PROGRESS BAR */
+  .master-bar-wrap {
+    max-width: 860px;
+    margin: 0 auto 2rem;
+  }
+  .bar-track {
+    background: var(--surface2);
+    border-radius: 3px;
+    height: 4px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 3px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+  .bar-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 6px;
+    font-family: var(--mono);
+  }
+
+  /* SPRINT BANNER */
+  .sprint-banner {
+    max-width: 860px;
+    margin: 0 auto 2rem;
+    background: linear-gradient(135deg, #0F1F18 0%, #0F1020 100%);
+    border: 1px solid #1E3A2E;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .sprint-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    flex-shrink: 0;
+  }
+  .sprint-text { flex: 1; font-size: 13px; color: var(--accent); font-weight: 500; }
+  .sprint-text span { color: var(--text2); font-weight: 300; }
+  .sprint-stats { display: flex; gap: 12px; }
+  .sprint-stat { font-family: var(--mono); font-size: 12px; color: var(--text2); }
+  .sprint-stat b { color: var(--warn); }
+
+  /* WEEK TABS */
+  .week-tabs {
+    max-width: 860px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .wtab {
+    padding: 6px 18px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: var(--mono);
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .wtab:hover { border-color: var(--text3); color: var(--text); }
+  .wtab.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
+  .wtab.sprint-week { border-color: #1E3A2E; }
+  .wtab.sprint-week.active { background: var(--accent); }
+
+  /* WEEK HEADER */
+  .week-header {
+    max-width: 860px;
+    margin: 0 auto 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .week-title { font-size: 16px; font-weight: 600; color: var(--text); }
+  .week-sub { font-size: 13px; color: var(--text2); margin-top: 2px; font-weight: 300; }
+  .week-done-count { font-family: var(--mono); font-size: 12px; color: var(--text3); }
+
+  /* DAY CARDS */
+  .day-list {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .day-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    display: grid;
+    grid-template-columns: 70px 1fr auto;
+    gap: 12px;
+    align-items: start;
+  }
+  .day-card:hover { border-color: var(--text3); }
+  .day-card.done { border-color: #1E4A35; background: #0D1F16; }
+  .day-card.break-card { background: transparent; border-style: dashed; border-color: #222230; cursor: default; opacity: 0.6; }
+  .day-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    padding-top: 2px;
+    letter-spacing: 0.04em;
+  }
+  .day-body { flex: 1; }
+  .day-topic { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .day-card.done .day-topic { color: var(--accent); }
+  .day-desc { font-size: 12px; color: var(--text2); line-height: 1.6; font-weight: 300; }
+  .tags { display: flex; gap: 6px; margin-top: 7px; flex-wrap: wrap; }
+  .tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    letter-spacing: 0.03em;
+  }
+  .tag-sql { background: #0F2A1E; color: #4ECCA0; border: 1px solid #1A4030; }
+  .tag-de  { background: #0F1528; color: #7C8FD4; border: 1px solid #1A2545; }
+  .tag-break { background: #1A1A20; color: #555568; border: 1px solid #222230; }
+  .tag-sprint { background: #1F1800; color: var(--warn); border: 1px solid #3A2D00; }
+
+  /* CHECKBOX */
+  .check-wrap { display: flex; align-items: flex-start; padding-top: 2px; }
+  .check {
+    width: 20px; height: 20px;
+    border-radius: 4px;
+    border: 1.5px solid var(--border);
+    background: var(--surface2);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .check.checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .check.checked::after {
+    content: '';
+    width: 5px; height: 9px;
+    border: 2px solid #000;
+    border-top: none; border-left: none;
+    transform: rotate(45deg);
+    margin-top: -2px;
+  }
+
+  /* NOTES */
+  .notes-toggle {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 8px;
+    cursor: pointer;
+    font-family: var(--mono);
+    display: inline-block;
+  }
+  .notes-toggle:hover { color: var(--text2); }
+  .notes-area {
+    display: none;
+    margin-top: 8px;
+  }
+  .notes-area textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-size: 12px;
+    font-family: var(--sans);
+    padding: 8px 10px;
+    resize: vertical;
+    min-height: 60px;
+    line-height: 1.6;
+    outline: none;
+  }
+  .notes-area textarea:focus { border-color: var(--text3); }
+  .notes-area textarea::placeholder { color: var(--text3); }
+
+  /* FOOTER */
+  .footer {
+    max-width: 860px;
+    margin: 3rem auto 0;
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-text { font-size: 12px; color: var(--text3); font-family: var(--mono); }
+  .reset-btn {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--accent3);
+    background: none;
+    border: 1px solid #3A1A1A;
+    border-radius: 4px;
+    padding: 5px 12px;
+    cursor: pointer;
+  }
+  .reset-btn:hover { background: #1A0A0A; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>Mounika's <span>Python DE</span> Sprint</h1>
+    <p>30 days · PySpark · Airflow · AWS · GCP · Interview ready</p>
+  </div>
+  <div class="header-right">
+    <div class="overall-pct" id="overall-pct">0%</div>
+    <div class="overall-label">completed</div>
+  </div>
+</div>
+
+<div class="master-bar-wrap">
+  <div class="bar-track"><div class="bar-fill" id="master-fill" style="width:0%"></div></div>
+  <div class="bar-labels">
+    <span id="done-count">0 / 0 sessions done</span>
+    <span id="days-left">30 days to go</span>
+  </div>
+</div>
+
+<div class="sprint-banner">
+  <div class="sprint-dot"></div>
+  <div class="sprint-text">🔥 3-Day Sprint Active — Days 1–3 <span>· 25 hours committed · Week 1 complete target</span></div>
+  <div class="sprint-stats">
+    <div class="sprint-stat">Sprint done: <b id="sprint-done">0/21</b></div>
+  </div>
+</div>
+
+<div class="week-tabs" id="week-tabs"></div>
+
+<div class="week-header">
+  <div>
+    <div class="week-title" id="week-title"></div>
+    <div class="week-sub" id="week-sub"></div>
+  </div>
+  <div class="week-done-count" id="week-done-count"></div>
+</div>
+
+<div class="day-list" id="day-list"></div>
+
+<div class="footer">
+  <div class="footer-text">Progress auto-saved in browser · Open this file anytime to continue</div>
+  <button class="reset-btn" onclick="resetAll()">Reset all progress</button>
+</div>
+
+<script>
+const weeks = [
+  {
+    label:"W1", title:"Python Fundamentals — SQL Engineer's Lens", sub:"Days 1–7 · Think of Python as SQL you can script", sprint:true,
+    days:[
+      {num:"Day 1", topic:"Variables, types & print", desc:"Python data types vs SQL column types. int, str, float, bool. F-strings and type casting.", sql:"SQL: column types → Python variable types", sprint:true},
+      {num:"Day 1", topic:"Lists & loops", desc:"Lists = result sets. for loops, enumerate(), range(). List slicing and modification.", sql:"SQL: SELECT rows → iterate list", sprint:true},
+      {num:"Day 1", topic:"Dictionaries & sets", desc:"Dict = key-value like a lookup/row. Set = DISTINCT values. CRUD on dicts.", sql:"SQL: JOIN keys → dict lookups", sprint:true},
+      {num:"Day 1", topic:"Functions — def, return, scope", desc:"Write 5 functions with args, kwargs, default params. Core reusable logic blocks.", sql:"SQL: stored procedures → Python functions", sprint:true},
+      {num:"Day 2", topic:"List comprehensions", desc:"[x for x in list if condition] — replaces 90% of filter loops in real DE code.", de:"Core DE pattern", sprint:true},
+      {num:"Day 2", topic:"File I/O — CSV & JSON", desc:"open(), with statement, csv.reader, csv.DictReader, json.load(), json.dump(). ETL building block.", de:"Core ETL skill", sprint:true},
+      {num:"Day 2", topic:"Error handling — try/except/finally", desc:"Handle FileNotFoundError, ValueError, KeyError. Write defensive code that logs bad rows.", de:"Production-ready code", sprint:true},
+      {num:"Day 2", topic:"Mini-project: ETL pipeline script", desc:"Read JSON → validate & clean → write to CSV. Handle errors gracefully. Interview-worthy code.", de:"Build project", sprint:true},
+      {num:"Day 3", topic:"Pandas DataFrames & reading files", desc:"pd.read_csv(), read_json(), head(), info(), describe(). Schema inspection.", sql:"SQL: SELECT * → df.head()", sprint:true},
+      {num:"Day 3", topic:"Filtering & selecting", desc:"Boolean indexing, .loc[], .iloc[], query(). Multi-condition filters.", sql:"SQL: WHERE → df[df['col'] > 5]", sprint:true},
+      {num:"Day 3", topic:"GroupBy & aggregations", desc:"groupby().agg() — your GROUP BY + COUNT/SUM/AVG. Named aggregations.", sql:"SQL: GROUP BY → groupby().agg()", sprint:true},
+      {num:"Day 3", topic:"Merge / join types + null handling", desc:"pd.merge(how='left/inner/outer'). isnull(), fillna(), dropna(). Data quality.", sql:"SQL: JOIN types → pd.merge()", sprint:true},
+      {num:"Day 3", topic:"5 Pandas DE problems", desc:"Aggregations, multi-table joins, null handling, deduplication, window-style ranking.", de:"Interview practice", sprint:true},
+      {num:"Day 3", topic:"Mini-project: Pandas ETL pipeline", desc:"Ingest 2 CSVs → join → aggregate → clean nulls → write to Parquet. Full pipeline.", de:"Build project", sprint:true},
+      {num:"Day 4–7", topic:"Parquet, partitioning & advanced Pandas", desc:"read_parquet(), to_parquet(), partition_cols. Apply, map, lambda. Advanced data wrangling.", de:"DE standard format"},
+    ]
+  },
+  {
+    label:"W2", title:"Pandas Deep Dive + Data Wrangling", sub:"Days 8–14 · Pandas is SQL in Python — learn it deeply",
+    days:[
+      {num:"Day 8",  topic:"Pandas basics — DataFrame & Series", desc:"Creating DataFrames. read_csv(), head(), info(), describe(). Indexing.", sql:"SQL: SELECT * → df.head()"},
+      {num:"Day 9",  topic:"Filtering and selecting", desc:"Boolean indexing, .loc[], .iloc[], query(). Multi-condition filters.", sql:"SQL: WHERE → df[df['col'] > 5]"},
+      {num:"Day 10", topic:"GroupBy and aggregations", desc:"groupby(), agg(), transform(). Multiple agg functions. Named aggregations.", sql:"SQL: GROUP BY + SUM/COUNT → groupby().agg()"},
+      {num:"Day 11", topic:"Joins and merges", desc:"merge() — inner, left, right, outer. concat(). Handling duplicate columns.", sql:"SQL: JOIN types → pd.merge(how=...)"},
+      {num:"Day 12", topic:"Apply, map, and lambda", desc:"Row-wise and column-wise transformations. apply() vs vectorized ops.", sql:"SQL: CASE WHEN → apply with lambda"},
+      {num:"Day 13", topic:"Null handling + data quality", desc:"isnull(), fillna(), dropna(), data type casting. Real-world dirty data.", de:"Data quality — interview favourite"},
+      {num:"Day 14", topic:"Parquet, partitioning + mini-project", desc:"read_parquet(), to_parquet(), partition_cols. Build a full data cleaning pipeline.", de:"DE standard format"},
+    ]
+  },
+  {
+    label:"W3", title:"PySpark + Pipeline Thinking", sub:"Days 15–21 · Scale everything to distributed data",
+    days:[
+      {num:"Day 15", topic:"PySpark intro — SparkSession & DataFrames", desc:"SparkSession.builder. Reading CSVs and Parquet. Schema inference vs explicit.", de:"Databricks Day 1 skill"},
+      {num:"Day 16", topic:"Transformations vs actions", desc:"Lazy evaluation. map(), filter(), select(), withColumn(). collect() vs show().", de:"Core Spark concept — always asked"},
+      {num:"Day 17", topic:"PySpark SQL and window functions", desc:"spark.sql(), Window.partitionBy(), rank(), lag(), lead().", sql:"SQL: ROW_NUMBER() OVER → PySpark Window"},
+      {num:"Day 18", topic:"Joins, broadcast joins, skew handling", desc:"Join types in Spark. broadcast() hint. Salting for skewed keys.", de:"Senior DE interview topic"},
+      {num:"Day 19", topic:"Partitioning and performance tuning", desc:"repartition() vs coalesce(). Partition pruning. Shuffle optimization.", de:"Databricks performance Q"},
+      {num:"Day 20", topic:"Delta Lake basics", desc:"Delta tables, ACID transactions, time travel, MERGE INTO, schema evolution.", de:"Databricks core — must know"},
+      {num:"Day 21", topic:"PySpark ETL mini-project", desc:"End-to-end pipeline: ingest → transform → write Delta table.", de:"Interview take-home simulation"},
+    ]
+  },
+  {
+    label:"W4", title:"Airflow + Cloud + Interview Blitz", sub:"Days 22–30 · Orchestration, AWS/GCP, mock interviews",
+    days:[
+      {num:"Day 22", topic:"Airflow — DAGs and operators", desc:"DAG definition, PythonOperator, BashOperator, task dependencies with >>.", de:"Airflow — 80% of DE jobs"},
+      {num:"Day 23", topic:"Airflow — scheduling, sensors, XComs", desc:"cron schedules, FileSensor, XCom push/pull for passing data between tasks.", de:"Real pipeline patterns"},
+      {num:"Day 24", topic:"AWS with Python — boto3 + S3", desc:"boto3 client, upload/download S3 objects, list buckets, trigger Lambda.", de:"AWS DE stack"},
+      {num:"Day 25", topic:"AWS Glue + Athena basics", desc:"Glue job scripting in Python, crawlers, Athena query via boto3.", de:"AWS interview essential"},
+      {num:"Day 26", topic:"GCP — BigQuery Python client", desc:"google-cloud-bigquery, run queries, load DataFrames, write to BQ tables.", de:"GCP DE stack"},
+      {num:"Day 27", topic:"System design — data pipeline patterns", desc:"Lambda vs Kappa architecture, idempotency, backfill strategy, SLAs.", de:"Senior DE system design"},
+      {num:"Day 28", topic:"Mock interview — coding round", desc:"Timed Python + PySpark problems. Focus: data transformation, edge cases.", de:"Interview simulation"},
+      {num:"Day 29", topic:"Mock interview — system design round", desc:"Design a batch pipeline, streaming pipeline. Talk through trade-offs.", de:"Interview simulation"},
+      {num:"Day 30", topic:"Revision + weak area blitz", desc:"Review all flagged topics. Redo problems you got wrong. Final prep.", de:"Final push"},
+    ]
+  }
+];
+
+let state = {};
+try { state = JSON.parse(localStorage.getItem('mounika_sprint') || '{}'); } catch(e){}
+let currentWeek = 0;
+
+function key(w, d) { return `w${w}d${d}`; }
+
+function allCheckable() {
+  let total = 0;
+  weeks.forEach(w => w.days.forEach(() => total++));
+  return total;
+}
+
+function countDone() {
+  return Object.values(state).filter(v => v && v.done).length;
+}
+
+function countSprintDone() {
+  let done = 0, total = 0;
+  weeks[0].days.forEach((d, i) => {
+    if (d.sprint) { total++; if (state[key(0,i)] && state[key(0,i)].done) done++; }
+  });
+  return { done, total };
+}
+
+function updateStats() {
+  const total = allCheckable();
+  const done = countDone();
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('overall-pct').textContent = pct + '%';
+  document.getElementById('master-fill').style.width = pct + '%';
+  document.getElementById('done-count').textContent = `${done} / ${total} sessions done`;
+  const daysLeft = Math.max(0, 30 - Math.floor(done / (total/30)));
+  document.getElementById('days-left').textContent = `${daysLeft} days to go`;
+  const sp = countSprintDone();
+  document.getElementById('sprint-done').textContent = `${sp.done}/${sp.total}`;
+}
+
+function save() {
+  try { localStorage.setItem('mounika_sprint', JSON.stringify(state)); } catch(e){}
+}
+
+function renderTabs() {
+  document.getElementById('week-tabs').innerHTML = weeks.map((w,i) =>
+    `<button class="wtab ${i===currentWeek?'active':''} ${w.sprint?'sprint-week':''}" onclick="setWeek(${i})">${w.label} ${w.sprint?'⚡':''}</button>`
+  ).join('');
+}
+
+function setWeek(i) { currentWeek = i; renderTabs(); renderWeek(); }
+
+function renderWeek() {
+  const w = weeks[currentWeek];
+  document.getElementById('week-title').textContent = w.title;
+  document.getElementById('week-sub').textContent = w.sub;
+  const done = w.days.filter((_,i) => state[key(currentWeek,i)] && state[key(currentWeek,i)].done).length;
+  document.getElementById('week-done-count').textContent = `${done} / ${w.days.length} done`;
+
+  document.getElementById('day-list').innerHTML = w.days.map((d, i) => {
+    const k = key(currentWeek, i);
+    const isDone = state[k] && state[k].done;
+    const note = (state[k] && state[k].note) || '';
+    const noteOpen = note ? 'block' : 'none';
+    return `
+    <div class="day-card ${isDone?'done':''}" id="card-${k}" onclick="toggleDone('${k}', event)">
+      <div class="day-num">${d.num}</div>
+      <div class="day-body">
+        <div class="day-topic">${d.topic}</div>
+        <div class="day-desc">${d.desc}</div>
+        <div class="tags">
+          ${d.sql ? `<span class="tag tag-sql">${d.sql}</span>` : ''}
+          ${d.de  ? `<span class="tag tag-de">${d.de}</span>` : ''}
+          ${d.sprint ? `<span class="tag tag-sprint">⚡ sprint</span>` : ''}
+        </div>
+        <span class="notes-toggle" onclick="toggleNote('${k}', event)">+ notes</span>
+        <div class="notes-area" id="note-${k}" style="display:${noteOpen}">
+          <textarea placeholder="Add your notes here..." onclick="event.stopPropagation()" onchange="saveNote('${k}', this.value)">${note}</textarea>
+        </div>
+      </div>
+      <div class="check-wrap">
+        <div class="check ${isDone?'checked':''}" id="chk-${k}"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleDone(k, e) {
+  if (e.target.tagName === 'TEXTAREA' || e.target.classList.contains('notes-toggle')) return;
+  if (!state[k]) state[k] = {};
+  state[k].done = !state[k].done;
+  save();
+  const card = document.getElementById('card-'+k);
+  const chk  = document.getElementById('chk-'+k);
+  card.classList.toggle('done', state[k].done);
+  chk.classList.toggle('checked', state[k].done);
+  // update week count
+  const w = weeks[currentWeek];
+  const done = w.days.filter((_,i) => state[key(currentWeek,i)] && state[key(currentWeek,i)].done).length;
+  document.getElementById('week-done-count').textContent = `${done} / ${w.days.length} done`;
+  updateStats();
+}
+
+function toggleNote(k, e) {
+  e.stopPropagation();
+  const el = document.getElementById('note-'+k);
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function saveNote(k, val) {
+  if (!state[k]) state[k] = {};
+  state[k].note = val;
+  save();
+}
+
+function resetAll() {
+  if (confirm('Reset all progress? This cannot be undone.')) {
+    state = {};
+    save();
+    renderWeek();
+    updateStats();
+  }
+}
+
+renderTabs();
+renderWeek();
+updateStats();
+</script>
+</body>
+</html>
