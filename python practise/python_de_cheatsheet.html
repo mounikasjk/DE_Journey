@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python for Data Engineering — Complete Cheat Sheet</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0A0B;
+  --s1: #111114;
+  --s2: #18181D;
+  --s3: #202028;
+  --border: #2A2A35;
+  --border2: #3A3A48;
+  --text: #E8E6F0;
+  --text2: #8A87A0;
+  --text3: #55526A;
+  --green: #3DD68C;
+  --blue: #60A5FA;
+  --orange: #FB923C;
+  --pink: #F472B6;
+  --yellow: #FBBF24;
+  --purple: #A78BFA;
+  --red: #F87171;
+  --cyan: #22D3EE;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Syne', sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html { scroll-behavior: smooth; }
+body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:13px;line-height:1.6}
+
+/* TOP NAV */
+.topnav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(10,10,11,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem;
+  display: flex; align-items: center; gap: 0; overflow-x: auto;
+  height: 48px;
+}
+.nav-brand { font-family: var(--sans); font-size: 14px; font-weight: 800; color: var(--text); white-space: nowrap; margin-right: 1.5rem; }
+.nav-brand span { color: var(--green); }
+.nav-link { padding: 0 12px; height: 48px; display: flex; align-items: center; font-size: 11px; color: var(--text2); cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.15s; text-decoration: none; }
+.nav-link:hover { color: var(--text); border-bottom-color: var(--border2); }
+.nav-link.active { color: var(--green); border-bottom-color: var(--green); }
+
+/* LAYOUT */
+.page { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+/* HERO */
+.hero { text-align: center; padding: 3rem 0 2.5rem; border-bottom: 1px solid var(--border); margin-bottom: 3rem; }
+.hero-tag { font-size: 11px; letter-spacing: 0.12em; color: var(--text3); text-transform: uppercase; margin-bottom: 1rem; }
+.hero h1 { font-family: var(--sans); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.05; color: var(--text); margin-bottom: 1rem; }
+.hero h1 em { color: var(--green); font-style: normal; }
+.hero p { font-size: 13px; color: var(--text2); max-width: 560px; margin: 0 auto; line-height: 1.8; }
+.hero-pills { display: flex; gap: 8px; justify-content: center; margin-top: 1.25rem; flex-wrap: wrap; }
+.pill { padding: 4px 12px; border-radius: 3px; font-size: 11px; border: 1px solid; }
+
+/* SECTION */
+.section { margin-bottom: 3.5rem; }
+.section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.section-num { font-size: 11px; color: var(--text3); }
+.section-title { font-family: var(--sans); font-size: 18px; font-weight: 700; }
+.section-sub { font-size: 11px; color: var(--text2); margin-left: auto; }
+
+/* GRID */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+@media(max-width:900px){ .grid3{grid-template-columns:1fr 1fr} }
+@media(max-width:640px){ .grid2,.grid3{grid-template-columns:1fr} }
+
+/* CARD */
+.card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.card-head {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.card-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink:0; }
+.card-label { font-size: 11px; font-weight: 500; letter-spacing: 0.04em; }
+.card-sql { font-size: 10px; color: var(--text3); margin-left: auto; }
+.card-body { padding: 12px 14px; }
+
+/* CODE BLOCKS */
+pre {
+  background: var(--s2);
+  border-radius: 5px;
+  padding: 10px 12px;
+  overflow-x: auto;
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 6px 0;
+}
+code { font-family: var(--mono); }
+.kw  { color: var(--purple); }
+.fn  { color: var(--blue); }
+.st  { color: var(--green); }
+.cm  { color: var(--text3); font-style:italic; }
+.nm  { color: var(--orange); }
+.op  { color: var(--text2); }
+.tp  { color: var(--cyan); }
+.de  { color: var(--pink); }
+
+/* INLINE CODE */
+ic { display: inline-block; background: var(--s3); color: var(--green); padding: 1px 6px; border-radius: 3px; font-size: 11px; font-family: var(--mono); }
+
+/* NOTE BOX */
+.note { background: var(--s2); border-left: 3px solid var(--yellow); padding: 8px 12px; border-radius: 0 4px 4px 0; font-size: 12px; color: var(--text2); margin: 8px 0; line-height: 1.6; }
+.note b { color: var(--yellow); }
+.warn { border-left-color: var(--red); }
+.warn b { color: var(--red); }
+.tip  { border-left-color: var(--green); }
+.tip  b { color: var(--green); }
+
+/* TABLE */
+.tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
+.tbl th { background: var(--s2); color: var(--text2); font-weight: 500; padding: 7px 12px; text-align: left; font-size: 11px; letter-spacing: 0.04em; border-bottom: 1px solid var(--border); }
+.tbl td { padding: 7px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: var(--s2); }
+.tbl td:first-child { color: var(--blue); }
+.tbl td:nth-child(2) { color: var(--green); }
+
+/* LABEL BADGES */
+.badge { display: inline-block; font-size: 10px; padding: 1px 7px; border-radius: 3px; margin: 1px; }
+.b-g { background:#0D2B1A; color:var(--green); border:1px solid #1A4A2E; }
+.b-b { background:#0D1F35; color:var(--blue); border:1px solid #1A3A5E; }
+.b-o { background:#2B1A0D; color:var(--orange); border:1px solid #4A2E1A; }
+.b-p { background:#1A0D2B; color:var(--purple); border:1px solid #2E1A4A; }
+.b-r { background:#2B0D0D; color:var(--red); border:1px solid #4A1A1A; }
+.b-y { background:#2B240D; color:var(--yellow); border:1px solid #4A3E1A; }
+
+/* DIVIDER */
+.divider { height:1px; background: var(--border); margin: 1rem 0; }
+
+/* FULLWIDTH CARD */
+.fw-card { background: var(--s1); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 12px; }
+.fw-head { padding: 10px 14px; border-bottom: 1px solid var(--border); display:flex; align-items:center; gap:8px; }
+.fw-body { padding: 12px 14px; }
+
+/* ANCHOR */
+.anchor { scroll-margin-top: 60px; }
+
+/* PRINT */
+@media print {
+  .topnav { display:none; }
+  .page { padding: 1rem; }
+  .section { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="nav-brand">Python <span>DE</span> · Cheat Sheet</div>
+  <a class="nav-link" href="#core">Core</a>
+  <a class="nav-link" href="#pandas">Pandas</a>
+  <a class="nav-link" href="#pyspark">PySpark</a>
+  <a class="nav-link" href="#delta">Delta</a>
+  <a class="nav-link" href="#airflow">Airflow</a>
+  <a class="nav-link" href="#aws">AWS</a>
+  <a class="nav-link" href="#gcp">GCP</a>
+  <a class="nav-link" href="#quality">Quality</a>
+  <a class="nav-link" href="#patterns">Patterns</a>
+  <a class="nav-link" href="#interview">Interview</a>
+</nav>
+
+<div class="page">
+
+<div class="hero">
+  <div class="hero-tag">Mounika · Data Engineering Interview Prep</div>
+  <h1>Python for <em>Data Engineering</em><br>Complete Cheat Sheet</h1>
+  <p>Every syntax pattern, every DE concept, every interview topic — in one place. Your SQL knowledge maps directly to everything here.</p>
+  <div class="hero-pills">
+    <span class="pill" style="color:var(--green);border-color:#1A4A2E;background:#0D2B1A">Python Core</span>
+    <span class="pill" style="color:var(--blue);border-color:#1A3A5E;background:#0D1F35">Pandas</span>
+    <span class="pill" style="color:var(--orange);border-color:#4A2E1A;background:#2B1A0D">PySpark</span>
+    <span class="pill" style="color:var(--purple);border-color:#2E1A4A;background:#1A0D2B">Airflow</span>
+    <span class="pill" style="color:var(--yellow);border-color:#4A3E1A;background:#2B240D">AWS · GCP</span>
+    <span class="pill" style="color:var(--pink);border-color:#4A1A3A;background:#2B0D1F">Data Quality</span>
+  </div>
+</div>
+
+<!-- ═══ 1. PYTHON CORE ═══ -->
+<div class="section anchor" id="core">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <span class="section-title" style="color:var(--green)">Python Core</span>
+    <span class="section-sub">Variables · Lists · Dicts · Functions · Comprehensions · File I/O · Errors</span>
+  </div>
+
+  <div class="grid2" style="margin-bottom:12px">
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--green)"></div><span class="card-label" style="color:var(--green)">Variables & Types</span><span class="card-sql">≈ SQL column types</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># Declare — no type keyword needed</span>
+name      <span class="op">=</span> <span class="st">"Mounika"</span>      <span class="cm"># str  → VARCHAR</span>
+emp_id    <span class="op">=</span> <span class="nm">1042</span>           <span class="cm"># int  → INT</span>
+salary    <span class="op">=</span> <span class="nm">85000.50</span>      <span class="cm"># float→ DECIMAL</span>
+is_active <span class="op">=</span> <span class="kw">True</span>           <span class="cm"># bool → BOOLEAN</span>
+nothing   <span class="op">=</span> <span class="kw">None</span>           <span class="cm"># null → NULL</span>
+
+<span class="cm"># Type casting — like CAST() in SQL</span>
+<span class="fn">int</span>(<span class="st">"42"</span>)        <span class="cm"># "42"    → 42</span>
+<span class="fn">float</span>(<span class="st">"3.14"</span>)    <span class="cm"># "3.14"  → 3.14</span>
+<span class="fn">str</span>(<span class="nm">100</span>)          <span class="cm"># 100     → "100"</span>
+<span class="fn">bool</span>(<span class="nm">1</span>)            <span class="cm"># 1       → True</span>
+
+<span class="cm"># f-strings — like CONCAT</span>
+<span class="fn">print</span>(<span class="st">f"</span><span class="op">{</span>name<span class="op">}</span><span class="st"> earns </span><span class="op">{</span>salary<span class="op">:,.2f</span><span class="op">}</span><span class="st">"</span>)
+<span class="cm"># Mounika earns 85,000.50</span>
+
+<span class="cm"># Check type</span>
+<span class="fn">type</span>(salary)    <span class="cm"># &lt;class 'float'&gt;</span>
+<span class="fn">isinstance</span>(salary, <span class="tp">float</span>)  <span class="cm"># True</span></code></pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--blue)"></div><span class="card-label" style="color:var(--blue)">Lists</span><span class="card-sql">≈ SQL result set</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># Create</span>
+names <span class="op">=</span> [<span class="st">"Mounika"</span>, <span class="st">"Rahul"</span>, <span class="st">"Priya"</span>]
+
+<span class="cm"># Access — 0-indexed</span>
+names[<span class="nm">0</span>]      <span class="cm"># "Mounika" (first)</span>
+names[<span class="op">-</span><span class="nm">1</span>]     <span class="cm"># "Priya"   (last)</span>
+names[<span class="nm">0</span>:<span class="nm">2</span>]    <span class="cm"># ["Mounika","Rahul"]</span>
+
+<span class="cm"># Modify</span>
+names.<span class="fn">append</span>(<span class="st">"Arjun"</span>)   <span class="cm"># add end</span>
+names.<span class="fn">insert</span>(<span class="nm">0</span>,<span class="st">"Sneha"</span>) <span class="cm"># add at index</span>
+names.<span class="fn">remove</span>(<span class="st">"Rahul"</span>)  <span class="cm"># delete by value</span>
+names.<span class="fn">pop</span>()             <span class="cm"># remove last</span>
+names[<span class="nm">1</span>] <span class="op">=</span> <span class="st">"New"</span>        <span class="cm"># update</span>
+
+<span class="cm"># Useful</span>
+<span class="fn">len</span>(names)              <span class="cm"># count</span>
+<span class="fn">sorted</span>(names)           <span class="cm"># returns sorted copy</span>
+<span class="st">"Mounika"</span> <span class="kw">in</span> names      <span class="cm"># True</span>
+names.<span class="fn">index</span>(<span class="st">"Priya"</span>)    <span class="cm"># 2</span>
+names2 <span class="op">=</span> names.<span class="fn">copy</span>()   <span class="cm"># shallow copy</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-bottom:12px">
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--orange)"></div><span class="card-label" style="color:var(--orange)">Loops</span><span class="card-sql">≈ cursor / row iteration</span></div>
+      <div class="card-body">
+<pre><code>salaries <span class="op">=</span> [<span class="nm">85000</span>, <span class="nm">92000</span>, <span class="nm">70000</span>]
+names    <span class="op">=</span> [<span class="st">"Mounika"</span>, <span class="st">"Rahul"</span>, <span class="st">"Priya"</span>]
+
+<span class="cm"># Basic for loop</span>
+<span class="kw">for</span> s <span class="kw">in</span> salaries:
+    <span class="fn">print</span>(s)
+
+<span class="cm"># With index — like ROW_NUMBER()</span>
+<span class="kw">for</span> i, s <span class="kw">in</span> <span class="fn">enumerate</span>(salaries):
+    <span class="fn">print</span>(<span class="st">f"Row </span><span class="op">{</span>i<span class="op">}</span><span class="st">: </span><span class="op">{</span>s<span class="op">}</span><span class="st">"</span>)
+
+<span class="cm"># Two lists together</span>
+<span class="kw">for</span> name, sal <span class="kw">in</span> <span class="fn">zip</span>(names, salaries):
+    <span class="fn">print</span>(<span class="st">f"</span><span class="op">{</span>name<span class="op">}</span><span class="st">: </span><span class="op">{</span>sal<span class="op">}</span><span class="st">"</span>)
+
+<span class="cm"># range()</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">5</span>):         <span class="cm"># 0,1,2,3,4</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>,<span class="nm">6</span>):      <span class="cm"># 1,2,3,4,5</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">0</span>,<span class="nm">10</span>,<span class="nm">2</span>):  <span class="cm"># 0,2,4,6,8</span>
+
+<span class="cm"># While loop</span>
+i <span class="op">=</span> <span class="nm">0</span>
+<span class="kw">while</span> i <span class="op">&lt;</span> <span class="nm">3</span>:
+    <span class="fn">print</span>(i); i <span class="op">+=</span> <span class="nm">1</span>
+
+<span class="cm"># break / continue</span>
+<span class="kw">for</span> s <span class="kw">in</span> salaries:
+    <span class="kw">if</span> s <span class="op">&gt;</span> <span class="nm">90000</span>: <span class="kw">break</span>    <span class="cm"># stop loop</span>
+    <span class="kw">if</span> s <span class="op">&lt;</span> <span class="nm">50000</span>: <span class="kw">continue</span> <span class="cm"># skip row</span></code></pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--pink)"></div><span class="card-label" style="color:var(--pink)">Dictionaries</span><span class="card-sql">≈ one row / lookup table</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># Dict = one row</span>
+emp <span class="op">=</span> {<span class="st">"name"</span>:<span class="st">"Mounika"</span>, <span class="st">"salary"</span>:<span class="nm">85000</span>}
+
+<span class="cm"># Read</span>
+emp[<span class="st">"name"</span>]             <span class="cm"># "Mounika"</span>
+emp.<span class="fn">get</span>(<span class="st">"age"</span>, <span class="nm">0</span>)       <span class="cm"># 0 (safe, no crash)</span>
+
+<span class="cm"># Write / update</span>
+emp[<span class="st">"dept"</span>] <span class="op">=</span> <span class="st">"DE"</span>       <span class="cm"># add/update</span>
+<span class="kw">del</span> emp[<span class="st">"dept"</span>]          <span class="cm"># delete key</span>
+
+<span class="cm"># Loop — like SELECT col, val</span>
+<span class="kw">for</span> k, v <span class="kw">in</span> emp.<span class="fn">items</span>(): <span class="fn">print</span>(k,v)
+<span class="kw">for</span> k <span class="kw">in</span> emp.<span class="fn">keys</span>():    <span class="fn">print</span>(k)
+<span class="kw">for</span> v <span class="kw">in</span> emp.<span class="fn">values</span>():  <span class="fn">print</span>(v)
+
+<span class="cm"># List of dicts = TABLE ← most important!</span>
+employees <span class="op">=</span> [
+  {<span class="st">"name"</span>:<span class="st">"Mounika"</span>, <span class="st">"dept"</span>:<span class="st">"DE"</span>},
+  {<span class="st">"name"</span>:<span class="st">"Rahul"</span>,   <span class="st">"dept"</span>:<span class="st">"Analytics"</span>},
+]
+<span class="kw">for</span> row <span class="kw">in</span> employees:
+    <span class="fn">print</span>(row[<span class="st">"name"</span>], row[<span class="st">"dept"</span>])
+
+<span class="cm"># Merge two dicts</span>
+a <span class="op">=</span> {<span class="st">"x"</span>:<span class="nm">1</span>}; b <span class="op">=</span> {<span class="st">"y"</span>:<span class="nm">2</span>}
+merged <span class="op">=</span> {<span class="op">**</span>a, <span class="op">**</span>b}  <span class="cm"># {"x":1,"y":2}</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-bottom:12px">
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--purple)"></div><span class="card-label" style="color:var(--purple)">Functions</span><span class="card-sql">≈ stored procedures</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># Basic function</span>
+<span class="kw">def</span> <span class="fn">get_bonus</span>(salary, pct<span class="op">=</span><span class="nm">0.1</span>):
+    <span class="kw">return</span> salary <span class="op">*</span> pct
+
+<span class="fn">get_bonus</span>(<span class="nm">85000</span>)        <span class="cm"># 8500.0</span>
+<span class="fn">get_bonus</span>(<span class="nm">85000</span>, <span class="nm">0.2</span>)   <span class="cm"># 17000.0</span>
+
+<span class="cm"># *args — variable positional args</span>
+<span class="kw">def</span> <span class="fn">total</span>(<span class="op">*</span>nums):
+    <span class="kw">return</span> <span class="fn">sum</span>(nums)
+<span class="fn">total</span>(<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>)            <span class="cm"># 6</span>
+
+<span class="cm"># **kwargs — variable keyword args</span>
+<span class="kw">def</span> <span class="fn">log_event</span>(<span class="op">**</span>info):
+    <span class="kw">for</span> k,v <span class="kw">in</span> info.<span class="fn">items</span>(): <span class="fn">print</span>(k,v)
+<span class="fn">log_event</span>(table<span class="op">=</span><span class="st">"sales"</span>, rows<span class="op">=</span><span class="nm">1000</span>)
+
+<span class="cm"># Lambda — one-liner</span>
+double <span class="op">=</span> <span class="kw">lambda</span> x: x <span class="op">*</span> <span class="nm">2</span>
+<span class="fn">double</span>(<span class="nm">5</span>)               <span class="cm"># 10</span>
+
+<span class="cm"># Closure</span>
+<span class="kw">def</span> <span class="fn">counter</span>():
+    n <span class="op">=</span> <span class="nm">0</span>
+    <span class="kw">def</span> <span class="fn">inc</span>(): <span class="kw">nonlocal</span> n; n<span class="op">+=</span><span class="nm">1</span>; <span class="kw">return</span> n
+    <span class="kw">return</span> inc
+c <span class="op">=</span> <span class="fn">counter</span>()
+<span class="fn">c</span>()  <span class="cm"># 1</span>  <span class="fn">c</span>()  <span class="cm"># 2</span></code></pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--cyan)"></div><span class="card-label" style="color:var(--cyan)">Comprehensions</span><span class="card-sql">≈ SELECT + WHERE</span></div>
+      <div class="card-body">
+<pre><code>nums <span class="op">=</span> [<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>,<span class="nm">4</span>,<span class="nm">5</span>]
+
+<span class="cm"># List comprehension</span>
+squares <span class="op">=</span> [x<span class="op">**</span><span class="nm">2</span> <span class="kw">for</span> x <span class="kw">in</span> nums]
+<span class="cm"># [1,4,9,16,25]</span>
+
+<span class="cm"># With filter — like WHERE</span>
+evens <span class="op">=</span> [x <span class="kw">for</span> x <span class="kw">in</span> nums <span class="kw">if</span> x<span class="op">%</span><span class="nm">2</span><span class="op">==</span><span class="nm">0</span>]
+<span class="cm"># [2, 4]</span>
+
+<span class="cm"># Transform + filter</span>
+big_sal <span class="op">=</span> [s<span class="op">*</span><span class="nm">1.1</span> <span class="kw">for</span> s <span class="kw">in</span> salaries <span class="kw">if</span> s<span class="op">&gt;</span><span class="nm">80000</span>]
+
+<span class="cm"># Dict comprehension</span>
+sal_map <span class="op">=</span> {e[<span class="st">"name"</span>]:e[<span class="st">"salary"</span>] <span class="kw">for</span> e <span class="kw">in</span> employees}
+
+<span class="cm"># Conditional expression (ternary)</span>
+grade <span class="op">=</span> <span class="st">"senior"</span> <span class="kw">if</span> salary<span class="op">&gt;</span><span class="nm">80000</span> <span class="kw">else</span> <span class="st">"junior"</span>
+
+<span class="cm"># Flatten nested list</span>
+nested <span class="op">=</span> [[<span class="nm">1</span>,<span class="nm">2</span>],[<span class="nm">3</span>,<span class="nm">4</span>],[<span class="nm">5</span>]]
+flat <span class="op">=</span> [x <span class="kw">for</span> sub <span class="kw">in</span> nested <span class="kw">for</span> x <span class="kw">in</span> sub]
+<span class="cm"># [1,2,3,4,5]</span>
+
+<span class="cm"># Set comprehension — DISTINCT</span>
+depts <span class="op">=</span> {e[<span class="st">"dept"</span>] <span class="kw">for</span> e <span class="kw">in</span> employees}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-bottom:12px">
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--yellow)"></div><span class="card-label" style="color:var(--yellow)">File I/O — CSV & JSON</span><span class="card-sql">≈ external tables / LOAD</span></div>
+      <div class="card-body">
+<pre><code><span class="kw">import</span> csv, json
+
+<span class="cm"># Read CSV</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"data.csv"</span>) <span class="kw">as</span> f:
+    reader <span class="op">=</span> csv.<span class="fn">DictReader</span>(f)  <span class="cm"># row=dict</span>
+    <span class="kw">for</span> row <span class="kw">in</span> reader:
+        <span class="fn">print</span>(row[<span class="st">"name"</span>], row[<span class="st">"salary"</span>])
+
+<span class="cm"># Write CSV</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"out.csv"</span>, <span class="st">"w"</span>, newline<span class="op">=</span><span class="st">""</span>) <span class="kw">as</span> f:
+    w <span class="op">=</span> csv.<span class="fn">DictWriter</span>(f, fieldnames<span class="op">=</span>[<span class="st">"name"</span>,<span class="st">"salary"</span>])
+    w.<span class="fn">writeheader</span>()
+    w.<span class="fn">writerow</span>({<span class="st">"name"</span>:<span class="st">"Mounika"</span>,<span class="st">"salary"</span>:<span class="nm">85000</span>})
+
+<span class="cm"># Read JSON</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"data.json"</span>) <span class="kw">as</span> f:
+    data <span class="op">=</span> json.<span class="fn">load</span>(f)      <span class="cm"># dict or list</span>
+
+<span class="cm"># Write JSON</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"out.json"</span>, <span class="st">"w"</span>) <span class="kw">as</span> f:
+    json.<span class="fn">dump</span>(data, f, indent<span class="op">=</span><span class="nm">2</span>)
+
+<span class="cm"># String ↔ JSON</span>
+s <span class="op">=</span> json.<span class="fn">dumps</span>(data)        <span class="cm"># obj → string</span>
+d <span class="op">=</span> json.<span class="fn">loads</span>(s)           <span class="cm"># string → obj</span></code></pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--red)"></div><span class="card-label" style="color:var(--red)">Error Handling</span><span class="card-sql">≈ EXCEPTION in stored proc</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># Basic try/except</span>
+<span class="kw">try</span>:
+    val <span class="op">=</span> <span class="fn">int</span>(<span class="st">"bad"</span>)
+<span class="kw">except</span> <span class="tp">ValueError</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="st">f"Error: </span><span class="op">{</span>e<span class="op">}</span><span class="st">"</span>)
+
+<span class="cm"># Multiple exceptions</span>
+<span class="kw">try</span>:
+    f <span class="op">=</span> <span class="fn">open</span>(<span class="st">"missing.csv"</span>)
+    val <span class="op">=</span> row[<span class="st">"bad_key"</span>]
+<span class="kw">except</span> <span class="tp">FileNotFoundError</span>:
+    <span class="fn">print</span>(<span class="st">"File missing"</span>)
+<span class="kw">except</span> <span class="tp">KeyError</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="st">f"Column missing: </span><span class="op">{</span>e<span class="op">}</span><span class="st">"</span>)
+<span class="kw">finally</span>:
+    <span class="fn">print</span>(<span class="st">"Always runs"</span>)   <span class="cm"># cleanup</span>
+
+<span class="cm"># DE pattern — skip bad rows, keep going</span>
+good_rows <span class="op">=</span> []
+<span class="kw">for</span> row <span class="kw">in</span> raw_data:
+    <span class="kw">try</span>:
+        good_rows.<span class="fn">append</span>({
+            <span class="st">"id"</span>: <span class="fn">int</span>(row[<span class="st">"id"</span>]),
+            <span class="st">"sal"</span>: <span class="fn">float</span>(row[<span class="st">"salary"</span>])
+        })
+    <span class="kw">except</span> (<span class="tp">ValueError</span>, <span class="tp">KeyError</span>):
+        <span class="fn">print</span>(<span class="st">f"Skipped: </span><span class="op">{</span>row<span class="op">}</span><span class="st">"</span>)</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="fw-card">
+    <div class="fw-head"><div class="card-dot" style="background:var(--text2)"></div><span class="card-label">Decorators — used constantly in Airflow, testing, and production code</span></div>
+    <div class="fw-body">
+<pre><code><span class="kw">import</span> time, functools
+
+<span class="cm"># Timer decorator</span>
+<span class="kw">def</span> <span class="fn">timer</span>(func):
+    <span class="op">@</span><span class="fn">functools.wraps</span>(func)
+    <span class="kw">def</span> <span class="fn">wrapper</span>(<span class="op">*</span>args, <span class="op">**</span>kwargs):
+        start <span class="op">=</span> time.<span class="fn">time</span>()
+        result <span class="op">=</span> <span class="fn">func</span>(<span class="op">*</span>args, <span class="op">**</span>kwargs)
+        <span class="fn">print</span>(<span class="st">f"</span><span class="op">{</span>func.<span class="fn">__name__</span><span class="op">}</span><span class="st"> took </span><span class="op">{</span>time.<span class="fn">time</span>()<span class="op">-</span>start<span class="op">:.2f</span><span class="op">}</span><span class="st">s"</span>)
+        <span class="kw">return</span> result
+    <span class="kw">return</span> wrapper
+
+<span class="op">@</span>timer
+<span class="kw">def</span> <span class="fn">load_data</span>(): time.<span class="fn">sleep</span>(<span class="nm">1</span>); <span class="kw">return</span> <span class="st">"done"</span>
+<span class="fn">load_data</span>()   <span class="cm"># load_data took 1.00s</span>
+
+<span class="cm"># Retry decorator — production DE pattern</span>
+<span class="kw">def</span> <span class="fn">retry</span>(n<span class="op">=</span><span class="nm">3</span>, wait<span class="op">=</span><span class="nm">1</span>):
+    <span class="kw">def</span> <span class="fn">decorator</span>(func):
+        <span class="op">@</span><span class="fn">functools.wraps</span>(func)
+        <span class="kw">def</span> <span class="fn">wrapper</span>(<span class="op">*</span>a, <span class="op">**</span>kw):
+            <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+                <span class="kw">try</span>: <span class="kw">return</span> <span class="fn">func</span>(<span class="op">*</span>a, <span class="op">**</span>kw)
+                <span class="kw">except</span> <span class="tp">Exception</span> <span class="kw">as</span> e:
+                    <span class="kw">if</span> i<span class="op">==</span>n<span class="op">-</span><span class="nm">1</span>: <span class="kw">raise</span>
+                    time.<span class="fn">sleep</span>(wait)
+        <span class="kw">return</span> wrapper
+    <span class="kw">return</span> decorator
+
+<span class="op">@</span><span class="fn">retry</span>(n<span class="op">=</span><span class="nm">3</span>, wait<span class="op">=</span><span class="nm">2</span>)
+<span class="kw">def</span> <span class="fn">call_api</span>(): ...   <span class="cm"># retries 3x on failure</span></code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2. PANDAS ═══ -->
+<div class="section anchor" id="pandas">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <span class="section-title" style="color:var(--blue)">Pandas</span>
+    <span class="section-sub">SQL in Python — DataFrames · GroupBy · Merge · Window · Parquet</span>
+  </div>
+
+  <div class="grid2" style="margin-bottom:12px">
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--blue)"></div><span class="card-label" style="color:var(--blue)">Read / Inspect</span><span class="card-sql">≈ DESC TABLE + SELECT *</span></div>
+      <div class="card-body">
+<pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Read</span>
+df <span class="op">=</span> pd.<span class="fn">read_csv</span>(<span class="st">"file.csv"</span>)
+df <span class="op">=</span> pd.<span class="fn">read_csv</span>(<span class="st">"file.csv"</span>, dtype<span class="op">=</span>{<span class="st">"id"</span>:<span class="fn">str</span>})
+df <span class="op">=</span> pd.<span class="fn">read_json</span>(<span class="st">"file.json"</span>)
+df <span class="op">=</span> pd.<span class="fn">read_parquet</span>(<span class="st">"file.parquet"</span>)
+df <span class="op">=</span> pd.<span class="fn">read_excel</span>(<span class="st">"file.xlsx"</span>)
+
+<span class="cm"># Inspect</span>
+df.<span class="fn">head</span>(<span class="nm">5</span>)          <span class="cm"># first 5 rows</span>
+df.<span class="fn">tail</span>(<span class="nm">5</span>)          <span class="cm"># last 5 rows</span>
+df.<span class="fn">info</span>()           <span class="cm"># dtypes + nulls</span>
+df.<span class="fn">describe</span>()       <span class="cm"># stats summary</span>
+df.<span class="fn">shape</span>            <span class="cm"># (rows, cols)</span>
+df.<span class="fn">columns</span>.<span class="fn">tolist</span>() <span class="cm"># column names</span>
+df.<span class="fn">dtypes</span>           <span class="cm"># column types</span>
+df.<span class="fn">nunique</span>()        <span class="cm"># distinct per col</span>
+df.<span class="fn">value_counts</span>()   <span class="cm"># freq table</span></code></pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--cyan)"></div><span class="card-label" style="color:var(--cyan)">Filter & Select</span><span class="card-sql">≈ WHERE / SELECT cols</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># Select columns</span>
+df[<span class="st">"salary"</span>]                   <span class="cm"># Series</span>
+df[[<span class="st">"name"</span>, <span class="st">"salary"</span>]]          <span class="cm"># DataFrame</span>
+
+<span class="cm"># Filter rows — like WHERE</span>
+df[df[<span class="st">"salary"</span>] <span class="op">&gt;</span> <span class="nm">80000</span>]
+df[df[<span class="st">"dept"</span>] <span class="op">==</span> <span class="st">"DE"</span>]
+df[df[<span class="st">"name"</span>].<span class="fn">isin</span>([<span class="st">"A"</span>,<span class="st">"B"</span>])]   <span class="cm"># IN ()</span>
+df[<span class="op">~</span>df[<span class="st">"dept"</span>].<span class="fn">isin</span>([<span class="st">"HR"</span>])]    <span class="cm"># NOT IN</span>
+
+<span class="cm"># Multiple conditions</span>
+df[(df[<span class="st">"sal"</span>]<span class="op">&gt;</span><span class="nm">50000</span>) <span class="op">&amp;</span> (df[<span class="st">"dept"</span>]<span class="op">==</span><span class="st">"DE"</span>)]
+df[(df[<span class="st">"sal"</span>]<span class="op">&lt;</span><span class="nm">40000</span>) <span class="op">|</span> (df[<span class="st">"sal"</span>]<span class="op">&gt;</span><span class="nm">100000</span>)]
+
+<span class="cm"># .loc — label based</span>
+df.<span class="fn">loc</span>[df[<span class="st">"dept"</span>]<span class="op">==</span><span class="st">"DE"</span>, [<span class="st">"name"</span>,<span class="st">"salary"</span>]]
+
+<span class="cm"># .iloc — position based</span>
+df.<span class="fn">iloc</span>[<span class="nm">0</span>:<span class="nm">5</span>, <span class="nm">0</span>:<span class="nm">3</span>]   <span class="cm"># rows 0-4, cols 0-2</span>
+
+<span class="cm"># query() — SQL-like string</span>
+df.<span class="fn">query</span>(<span class="st">"salary &gt; 80000 and dept == 'DE'"</span>)
+
+<span class="cm"># Sort — ORDER BY</span>
+df.<span class="fn">sort_values</span>(<span class="st">"salary"</span>, ascending<span class="op">=</span><span class="kw">False</span>)
+df.<span class="fn">sort_values</span>([<span class="st">"dept"</span>,<span class="st">"salary"</span>], ascending<span class="op">=</span>[<span class="kw">True</span>,<span class="kw">False</span>])</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-bottom:12px">
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--green)"></div><span class="card-label" style="color:var(--green)">GroupBy & Aggregations</span><span class="card-sql">≈ GROUP BY</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># Basic groupby</span>
+df.<span class="fn">groupby</span>(<span class="st">"dept"</span>)[<span class="st">"salary"</span>].<span class="fn">mean</span>()
+df.<span class="fn">groupby</span>(<span class="st">"dept"</span>)[<span class="st">"salary"</span>].<span class="fn">sum</span>()
+df.<span class="fn">groupby</span>(<span class="st">"dept"</span>)[<span class="st">"id"</span>].<span class="fn">count</span>()
+
+<span class="cm"># Multiple columns</span>
+df.<span class="fn">groupby</span>([<span class="st">"dept"</span>,<span class="st">"month"</span>])[<span class="st">"sales"</span>].<span class="fn">sum</span>()
+
+<span class="cm"># Multiple aggs — like SELECT dept, SUM, AVG, COUNT</span>
+df.<span class="fn">groupby</span>(<span class="st">"dept"</span>).<span class="fn">agg</span>(
+    total   <span class="op">=</span> (<span class="st">"salary"</span>, <span class="st">"sum"</span>),
+    avg_sal <span class="op">=</span> (<span class="st">"salary"</span>, <span class="st">"mean"</span>),
+    headcnt <span class="op">=</span> (<span class="st">"id"</span>,     <span class="st">"count"</span>),
+    max_sal <span class="op">=</span> (<span class="st">"salary"</span>, <span class="st">"max"</span>)
+).<span class="fn">reset_index</span>()
+
+<span class="cm"># transform — keeps original shape (for self-join)</span>
+df[<span class="st">"dept_avg"</span>] <span class="op">=</span> df.<span class="fn">groupby</span>(<span class="st">"dept"</span>)[<span class="st">"salary"</span>].\
+                  <span class="fn">transform</span>(<span class="st">"mean"</span>)
+
+<span class="cm"># Filter groups — HAVING</span>
+df.<span class="fn">groupby</span>(<span class="st">"dept"</span>).<span class="fn">filter</span>(<span class="kw">lambda</span> x: <span class="fn">len</span>(x)<span class="op">&gt;</span><span class="nm">2</span>)
+
+<span class="cm"># Pivot — like PIVOT in SQL</span>
+pd.<span class="fn">pivot_table</span>(df,
+    values<span class="op">=</span><span class="st">"sales"</span>, index<span class="op">=</span><span class="st">"dept"</span>,
+    columns<span class="op">=</span><span class="st">"month"</span>, aggfunc<span class="op">=</span><span class="st">"sum"</span>, fill_value<span class="op">=</span><span class="nm">0</span>)</code></pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--orange)"></div><span class="card-label" style="color:var(--orange)">Merge / Join</span><span class="card-sql">≈ JOIN types</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># INNER JOIN</span>
+pd.<span class="fn">merge</span>(emp, dept, on<span class="op">=</span><span class="st">"dept_id"</span>, how<span class="op">=</span><span class="st">"inner"</span>)
+
+<span class="cm"># LEFT JOIN</span>
+pd.<span class="fn">merge</span>(emp, dept, on<span class="op">=</span><span class="st">"dept_id"</span>, how<span class="op">=</span><span class="st">"left"</span>)
+
+<span class="cm"># RIGHT / OUTER JOIN</span>
+pd.<span class="fn">merge</span>(a, b, how<span class="op">=</span><span class="st">"right"</span>)
+pd.<span class="fn">merge</span>(a, b, how<span class="op">=</span><span class="st">"outer"</span>)
+
+<span class="cm"># Different column names</span>
+pd.<span class="fn">merge</span>(emp, dept,
+    left_on<span class="op">=</span><span class="st">"dept_id"</span>, right_on<span class="op">=</span><span class="st">"id"</span>)
+
+<span class="cm"># Find unmatched — like anti-join</span>
+merged <span class="op">=</span> pd.<span class="fn">merge</span>(a, b, how<span class="op">=</span><span class="st">"left"</span>,
+                  indicator<span class="op">=</span><span class="kw">True</span>)
+unmatched <span class="op">=</span> merged[merged[<span class="st">"_merge"</span>]<span class="op">==</span><span class="st">"left_only"</span>]
+
+<span class="cm"># Stack rows — UNION ALL</span>
+pd.<span class="fn">concat</span>([df1, df2], ignore_index<span class="op">=</span><span class="kw">True</span>)
+
+<span class="cm"># Stack columns — like adding cols</span>
+pd.<span class="fn">concat</span>([df1, df2], axis<span class="op">=</span><span class="nm">1</span>)</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-bottom:12px">
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--pink)"></div><span class="card-label" style="color:var(--pink)">Null Handling + Data Quality</span><span class="card-sql">≈ IS NULL / COALESCE</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># Check nulls</span>
+df.<span class="fn">isnull</span>().<span class="fn">sum</span>()          <span class="cm"># count per col</span>
+df[<span class="st">"salary"</span>].<span class="fn">isnull</span>()     <span class="cm"># boolean mask</span>
+df[df[<span class="st">"salary"</span>].<span class="fn">notna</span>()] <span class="cm"># filter non-null</span>
+
+<span class="cm"># Fill nulls — COALESCE / ISNULL</span>
+df[<span class="st">"salary"</span>].<span class="fn">fillna</span>(<span class="nm">0</span>)
+df[<span class="st">"salary"</span>].<span class="fn">fillna</span>(df[<span class="st">"salary"</span>].<span class="fn">mean</span>())
+df.<span class="fn">fillna</span>({<span class="st">"salary"</span>:<span class="nm">0</span>, <span class="st">"dept"</span>:<span class="st">"Unknown"</span>})
+df.<span class="fn">ffill</span>()   <span class="cm"># forward fill</span>
+df.<span class="fn">bfill</span>()   <span class="cm"># backward fill</span>
+
+<span class="cm"># Drop nulls</span>
+df.<span class="fn">dropna</span>()                 <span class="cm"># any null</span>
+df.<span class="fn">dropna</span>(subset<span class="op">=</span>[<span class="st">"salary"</span>]) <span class="cm"># specific col</span>
+df.<span class="fn">dropna</span>(thresh<span class="op">=</span><span class="nm">3</span>)         <span class="cm"># need 3 non-null</span>
+
+<span class="cm"># Deduplication</span>
+df.<span class="fn">drop_duplicates</span>()
+df.<span class="fn">drop_duplicates</span>(subset<span class="op">=</span>[<span class="st">"id"</span>,<span class="st">"date"</span>])
+df.<span class="fn">drop_duplicates</span>(keep<span class="op">=</span><span class="st">"last"</span>)  <span class="cm"># keep latest</span>
+
+<span class="cm"># Type casting columns</span>
+df[<span class="st">"id"</span>] <span class="op">=</span> df[<span class="st">"id"</span>].<span class="fn">astype</span>(<span class="fn">int</span>)
+df[<span class="st">"dt"</span>] <span class="op">=</span> pd.<span class="fn">to_datetime</span>(df[<span class="st">"dt"</span>])</code></pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--purple)"></div><span class="card-label" style="color:var(--purple)">Apply, Window, Parquet</span><span class="card-sql">≈ CASE WHEN / OVER / Parquet</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># apply — CASE WHEN logic</span>
+df[<span class="st">"grade"</span>] <span class="op">=</span> df[<span class="st">"salary"</span>].<span class="fn">apply</span>(
+    <span class="kw">lambda</span> x: <span class="st">"senior"</span> <span class="kw">if</span> x<span class="op">&gt;</span><span class="nm">80000</span> <span class="kw">else</span> <span class="st">"junior"</span>
+)
+<span class="cm"># row-wise apply</span>
+df.<span class="fn">apply</span>(<span class="kw">lambda</span> row: row[<span class="st">"a"</span>]<span class="op">+</span>row[<span class="st">"b"</span>], axis<span class="op">=</span><span class="nm">1</span>)
+
+<span class="cm"># Window functions — like SQL OVER()</span>
+df[<span class="st">"rank"</span>] <span class="op">=</span> df.<span class="fn">groupby</span>(<span class="st">"dept"</span>)[<span class="st">"salary"</span>]\
+               .<span class="fn">rank</span>(method<span class="op">=</span><span class="st">"dense"</span>, ascending<span class="op">=</span><span class="kw">False</span>)
+df[<span class="st">"cumsum"</span>] <span class="op">=</span> df.<span class="fn">groupby</span>(<span class="st">"dept"</span>)[<span class="st">"sales"</span>].<span class="fn">cumsum</span>()
+df[<span class="st">"prev"</span>]   <span class="op">=</span> df[<span class="st">"sales"</span>].<span class="fn">shift</span>(<span class="nm">1</span>)   <span class="cm"># LAG(1)</span>
+df[<span class="st">"roll7"</span>]  <span class="op">=</span> df[<span class="st">"sales"</span>].<span class="fn">rolling</span>(<span class="nm">7</span>).<span class="fn">mean</span>()
+
+<span class="cm"># Write / read Parquet</span>
+df.<span class="fn">to_parquet</span>(<span class="st">"out.parquet"</span>, index<span class="op">=</span><span class="kw">False</span>)
+df.<span class="fn">to_parquet</span>(<span class="st">"out/"</span>,
+    partition_cols<span class="op">=</span>[<span class="st">"year"</span>,<span class="st">"month"</span>],
+    compression<span class="op">=</span><span class="st">"snappy"</span>)
+df <span class="op">=</span> pd.<span class="fn">read_parquet</span>(<span class="st">"out/"</span>,
+    filters<span class="op">=</span>[(<span class="st">"year"</span>,<span class="st">"=="</span>,<span class="nm">2024</span>)])</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 3. PYSPARK ═══ -->
+<div class="section anchor" id="pyspark">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <span class="section-title" style="color:var(--orange)">PySpark</span>
+    <span class="section-sub">SparkSession · Transforms · Joins · Window · Performance · UDFs</span>
+  </div>
+
+  <div class="grid2" style="margin-bottom:12px">
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--orange)"></div><span class="card-label" style="color:var(--orange)">Setup & Read</span></div>
+      <div class="card-body">
+<pre><code><span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">from</span> pyspark.sql <span class="kw">import</span> functions <span class="kw">as</span> F
+<span class="kw">from</span> pyspark.sql.types <span class="kw">import</span> <span class="op">*</span>
+
+spark <span class="op">=</span> SparkSession.<span class="fn">builder</span>\
+    .<span class="fn">appName</span>(<span class="st">"ETL"</span>)\
+    .<span class="fn">config</span>(<span class="st">"spark.sql.shuffle.partitions"</span>,<span class="st">"200"</span>)\
+    .<span class="fn">getOrCreate</span>()
+
+<span class="cm"># Read</span>
+df <span class="op">=</span> spark.read.<span class="fn">csv</span>(<span class="st">"s3://bucket/file.csv"</span>,
+       header<span class="op">=</span><span class="kw">True</span>, inferSchema<span class="op">=</span><span class="kw">True</span>)
+df <span class="op">=</span> spark.read.<span class="fn">parquet</span>(<span class="st">"s3://bucket/data/"</span>)
+df <span class="op">=</span> spark.read.<span class="fn">json</span>(<span class="st">"s3://bucket/data.json"</span>)
+
+<span class="cm"># Explicit schema — production best practice</span>
+schema <span class="op">=</span> <span class="fn">StructType</span>([
+    <span class="fn">StructField</span>(<span class="st">"id"</span>,     <span class="fn">IntegerType</span>(),  <span class="kw">True</span>),
+    <span class="fn">StructField</span>(<span class="st">"name"</span>,   <span class="fn">StringType</span>(),   <span class="kw">True</span>),
+    <span class="fn">StructField</span>(<span class="st">"salary"</span>, <span class="fn">DoubleType</span>(),   <span class="kw">True</span>),
+])
+df <span class="op">=</span> spark.read.<span class="fn">csv</span>(<span class="st">"file.csv"</span>,
+       header<span class="op">=</span><span class="kw">True</span>, schema<span class="op">=</span>schema)
+
+<span class="cm"># Inspect</span>
+df.<span class="fn">printSchema</span>()
+df.<span class="fn">show</span>(<span class="nm">5</span>, truncate<span class="op">=</span><span class="kw">False</span>)
+df.<span class="fn">count</span>()
+df.<span class="fn">columns</span></code></pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--yellow)"></div><span class="card-label" style="color:var(--yellow)">Transforms — lazy (no execution until action)</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># Select columns</span>
+df.<span class="fn">select</span>(<span class="st">"name"</span>, <span class="st">"salary"</span>)
+df.<span class="fn">select</span>(F.<span class="fn">col</span>(<span class="st">"name"</span>), (F.<span class="fn">col</span>(<span class="st">"salary"</span>)<span class="op">*</span><span class="nm">1.1</span>).<span class="fn">alias</span>(<span class="st">"new_sal"</span>))
+
+<span class="cm"># Filter — WHERE</span>
+df.<span class="fn">filter</span>(F.<span class="fn">col</span>(<span class="st">"salary"</span>) <span class="op">&gt;</span> <span class="nm">80000</span>)
+df.<span class="fn">filter</span>((F.<span class="fn">col</span>(<span class="st">"dept"</span>) <span class="op">==</span> <span class="st">"DE"</span>) <span class="op">&amp;</span> (F.<span class="fn">col</span>(<span class="st">"sal"</span>) <span class="op">&gt;</span> <span class="nm">50000</span>))
+
+<span class="cm"># Add/update column</span>
+df.<span class="fn">withColumn</span>(<span class="st">"bonus"</span>, F.<span class="fn">col</span>(<span class="st">"salary"</span>)<span class="op">*</span><span class="nm">0.1</span>)
+df.<span class="fn">withColumn</span>(<span class="st">"salary"</span>, F.<span class="fn">col</span>(<span class="st">"salary"</span>).<span class="fn">cast</span>(<span class="st">"double"</span>))
+df.<span class="fn">withColumnRenamed</span>(<span class="st">"old"</span>, <span class="st">"new"</span>)
+
+<span class="cm"># CASE WHEN</span>
+df.<span class="fn">withColumn</span>(<span class="st">"grade"</span>,
+    F.<span class="fn">when</span>(F.<span class="fn">col</span>(<span class="st">"salary"</span>)<span class="op">&gt;</span><span class="nm">100000</span>, <span class="st">"senior"</span>)
+     .<span class="fn">when</span>(F.<span class="fn">col</span>(<span class="st">"salary"</span>)<span class="op">&gt;</span><span class="nm">60000</span>,  <span class="st">"mid"</span>)
+     .<span class="fn">otherwise</span>(<span class="st">"junior"</span>))
+
+<span class="cm"># GroupBy — same as SQL</span>
+df.<span class="fn">groupBy</span>(<span class="st">"dept"</span>).<span class="fn">agg</span>(
+    F.<span class="fn">sum</span>(<span class="st">"salary"</span>).<span class="fn">alias</span>(<span class="st">"total"</span>),
+    F.<span class="fn">avg</span>(<span class="st">"salary"</span>).<span class="fn">alias</span>(<span class="st">"avg"</span>),
+    F.<span class="fn">count</span>(<span class="st">"*"</span>).<span class="fn">alias</span>(<span class="st">"cnt"</span>)
+)</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-bottom:12px">
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--green)"></div><span class="card-label" style="color:var(--green)">Window Functions</span><span class="card-sql">≈ OVER(PARTITION BY)</span></div>
+      <div class="card-body">
+<pre><code><span class="kw">from</span> pyspark.sql.window <span class="kw">import</span> Window
+
+w <span class="op">=</span> Window.<span class="fn">partitionBy</span>(<span class="st">"dept"</span>).<span class="fn">orderBy</span>(
+        F.<span class="fn">col</span>(<span class="st">"salary"</span>).<span class="fn">desc</span>())
+
+<span class="cm"># RANK, DENSE_RANK, ROW_NUMBER</span>
+df.<span class="fn">withColumn</span>(<span class="st">"rank"</span>,     F.<span class="fn">rank</span>().<span class="fn">over</span>(w))
+df.<span class="fn">withColumn</span>(<span class="st">"d_rank"</span>,   F.<span class="fn">dense_rank</span>().<span class="fn">over</span>(w))
+df.<span class="fn">withColumn</span>(<span class="st">"row_num"</span>,  F.<span class="fn">row_number</span>().<span class="fn">over</span>(w))
+
+<span class="cm"># LAG / LEAD</span>
+df.<span class="fn">withColumn</span>(<span class="st">"prev_sal"</span>, F.<span class="fn">lag</span>(<span class="st">"salary"</span>,<span class="nm">1</span>).<span class="fn">over</span>(w))
+df.<span class="fn">withColumn</span>(<span class="st">"next_sal"</span>, F.<span class="fn">lead</span>(<span class="st">"salary"</span>,<span class="nm">1</span>).<span class="fn">over</span>(w))
+
+<span class="cm"># Running total — SUM OVER ORDER BY</span>
+w2 <span class="op">=</span> Window.<span class="fn">partitionBy</span>(<span class="st">"dept"</span>)\
+            .<span class="fn">orderBy</span>(<span class="st">"date"</span>)\
+            .<span class="fn">rowsBetween</span>(Window.<span class="fn">unboundedPreceding</span>, <span class="nm">0</span>)
+df.<span class="fn">withColumn</span>(<span class="st">"running_total"</span>, F.<span class="fn">sum</span>(<span class="st">"sales"</span>).<span class="fn">over</span>(w2))
+
+<span class="cm"># Top N per group</span>
+df.<span class="fn">withColumn</span>(<span class="st">"rn"</span>, F.<span class="fn">row_number</span>().<span class="fn">over</span>(w))\
+  .<span class="fn">filter</span>(F.<span class="fn">col</span>(<span class="st">"rn"</span>) <span class="op">&lt;=</span> <span class="nm">3</span>)          <span class="cm"># top 3 per dept</span></code></pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--red)"></div><span class="card-label" style="color:var(--red)">Joins & Performance</span><span class="card-sql">≈ JOIN + query hints</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># Standard joins</span>
+emp.<span class="fn">join</span>(dept, <span class="st">"dept_id"</span>,           <span class="st">"inner"</span>)
+emp.<span class="fn">join</span>(dept, <span class="st">"dept_id"</span>,           <span class="st">"left"</span>)
+emp.<span class="fn">join</span>(dept, emp.id <span class="op">==</span> dept.emp_id, <span class="st">"inner"</span>)
+
+<span class="cm"># Broadcast join — small table hint</span>
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> broadcast
+emp.<span class="fn">join</span>(<span class="fn">broadcast</span>(dept), <span class="st">"dept_id"</span>)
+<span class="cm"># Use when one table is &lt; 100MB</span>
+
+<span class="cm"># Partitioning</span>
+df.<span class="fn">repartition</span>(<span class="nm">10</span>)       <span class="cm"># shuffle — increase</span>
+df.<span class="fn">coalesce</span>(<span class="nm">2</span>)           <span class="cm"># no shuffle — decrease</span>
+df.<span class="fn">repartition</span>(<span class="nm">10</span>, <span class="st">"dept"</span>) <span class="cm"># partition by col</span>
+
+<span class="cm"># Cache — reuse expensive computation</span>
+df.<span class="fn">cache</span>()    <span class="cm"># memory</span>
+df.<span class="fn">persist</span>()  <span class="cm"># memory + disk</span>
+df.<span class="fn">unpersist</span>()
+
+<span class="cm"># Write</span>
+df.<span class="fn">write</span>.<span class="fn">mode</span>(<span class="st">"overwrite"</span>).<span class="fn">parquet</span>(<span class="st">"s3://out/"</span>)
+df.<span class="fn">write</span>.<span class="fn">mode</span>(<span class="st">"append"</span>)\
+   .<span class="fn">partitionBy</span>(<span class="st">"year"</span>,<span class="st">"month"</span>)\
+   .<span class="fn">parquet</span>(<span class="st">"s3://out/"</span>)</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="fw-card">
+    <div class="fw-head"><div class="card-dot" style="background:var(--purple)"></div><span class="card-label">PySpark SQL + UDFs</span></div>
+    <div class="fw-body">
+<pre><code><span class="cm"># Run SQL directly</span>
+df.<span class="fn">createOrReplaceTempView</span>(<span class="st">"employees"</span>)
+spark.<span class="fn">sql</span>(<span class="st">"""
+    SELECT dept, AVG(salary) as avg_sal, COUNT(*) as cnt
+    FROM employees
+    WHERE salary &gt; 50000
+    GROUP BY dept HAVING cnt &gt; 2
+    ORDER BY avg_sal DESC
+"""</span>).<span class="fn">show</span>()
+
+<span class="cm"># UDF — only when built-in F functions don't exist</span>
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> udf
+<span class="kw">from</span> pyspark.sql.types <span class="kw">import</span> StringType
+
+<span class="op">@</span><span class="fn">udf</span>(<span class="fn">StringType</span>())
+<span class="kw">def</span> <span class="fn">clean_name</span>(s): <span class="kw">return</span> s.<span class="fn">strip</span>().<span class="fn">title</span>() <span class="kw">if</span> s <span class="kw">else</span> <span class="kw">None</span>
+df.<span class="fn">withColumn</span>(<span class="st">"name"</span>, <span class="fn">clean_name</span>(F.<span class="fn">col</span>(<span class="st">"name"</span>)))
+
+<span class="cm"># pandas_udf — 100x faster than regular UDF for vectorized ops</span>
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> pandas_udf
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="op">@</span><span class="fn">pandas_udf</span>(<span class="st">"double"</span>)
+<span class="kw">def</span> <span class="fn">scale_salary</span>(s: pd.Series) <span class="op">-&gt;</span> pd.Series:
+    <span class="kw">return</span> s <span class="op">*</span> <span class="nm">1.15</span>
+df.<span class="fn">withColumn</span>(<span class="st">"new_sal"</span>, <span class="fn">scale_salary</span>(F.<span class="fn">col</span>(<span class="st">"salary"</span>)))</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 4. DELTA LAKE ═══ -->
+<div class="section anchor" id="delta">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <span class="section-title" style="color:var(--cyan)">Delta Lake</span>
+    <span class="section-sub">ACID · MERGE · Time Travel · Schema Evolution · Databricks</span>
+  </div>
+  <div class="grid2" style="margin-bottom:12px">
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--cyan)"></div><span class="card-label" style="color:var(--cyan)">Read / Write / MERGE</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># Write Delta table</span>
+df.<span class="fn">write</span>.<span class="fn">format</span>(<span class="st">"delta"</span>)\
+   .<span class="fn">mode</span>(<span class="st">"overwrite"</span>)\
+   .<span class="fn">save</span>(<span class="st">"/mnt/delta/employees"</span>)
+
+<span class="cm"># Read Delta table</span>
+df <span class="op">=</span> spark.read.<span class="fn">format</span>(<span class="st">"delta"</span>)\
+          .<span class="fn">load</span>(<span class="st">"/mnt/delta/employees"</span>)
+
+<span class="cm"># MERGE INTO (upsert) — SCD Type 1</span>
+<span class="kw">from</span> delta.tables <span class="kw">import</span> DeltaTable
+
+target <span class="op">=</span> DeltaTable.<span class="fn">forPath</span>(spark, <span class="st">"/mnt/delta/emp"</span>)
+target.<span class="fn">alias</span>(<span class="st">"t"</span>).<span class="fn">merge</span>(
+    updates.<span class="fn">alias</span>(<span class="st">"u"</span>),
+    <span class="st">"t.id = u.id"</span>
+).<span class="fn">whenMatchedUpdateAll</span>()\
+ .<span class="fn">whenNotMatchedInsertAll</span>()\
+ .<span class="fn">execute</span>()
+
+<span class="cm"># Time travel</span>
+df <span class="op">=</span> spark.read.<span class="fn">format</span>(<span class="st">"delta"</span>)\
+  .<span class="fn">option</span>(<span class="st">"versionAsOf"</span>, <span class="nm">3</span>)\
+  .<span class="fn">load</span>(<span class="st">"/mnt/delta/emp"</span>)   <span class="cm"># version 3</span>
+
+df <span class="op">=</span> spark.read.<span class="fn">format</span>(<span class="st">"delta"</span>)\
+  .<span class="fn">option</span>(<span class="st">"timestampAsOf"</span>, <span class="st">"2024-01-01"</span>)\
+  .<span class="fn">load</span>(<span class="st">"/mnt/delta/emp"</span>)</code></pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--blue)"></div><span class="card-label" style="color:var(--blue)">Maintenance + SCD2</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># History</span>
+DeltaTable.<span class="fn">forPath</span>(spark, <span class="st">"/mnt/delta/emp"</span>)\
+  .<span class="fn">history</span>().<span class="fn">show</span>()
+
+<span class="cm"># Vacuum — delete old files (default 7 days)</span>
+DeltaTable.<span class="fn">forPath</span>(spark, <span class="st">"/mnt/delta/emp"</span>)\
+  .<span class="fn">vacuum</span>(<span class="nm">168</span>)   <span class="cm"># 168 hours = 7 days</span>
+
+<span class="cm"># Optimize + Z-order</span>
+<span class="op">%</span>sql
+OPTIMIZE delta.<span class="st">`/mnt/delta/emp`</span>
+ZORDER BY (dept, date)
+
+<span class="cm"># SCD Type 2 MERGE pattern</span>
+target.<span class="fn">alias</span>(<span class="st">"t"</span>).<span class="fn">merge</span>(
+    updates.<span class="fn">alias</span>(<span class="st">"u"</span>),
+    <span class="st">"t.id = u.id AND t.is_current = true"</span>
+).<span class="fn">whenMatchedUpdate</span>(set<span class="op">=</span>{
+    <span class="st">"is_current"</span>: <span class="st">"false"</span>,
+    <span class="st">"end_date"</span>:   <span class="st">"current_date()"</span>
+}).<span class="fn">whenNotMatchedInsert</span>(values<span class="op">=</span>{
+    <span class="st">"id"</span>:         <span class="st">"u.id"</span>,
+    <span class="st">"salary"</span>:     <span class="st">"u.salary"</span>,
+    <span class="st">"start_date"</span>: <span class="st">"current_date()"</span>,
+    <span class="st">"end_date"</span>:   <span class="st">"null"</span>,
+    <span class="st">"is_current"</span>: <span class="st">"true"</span>
+}).<span class="fn">execute</span>()</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 5. AIRFLOW ═══ -->
+<div class="section anchor" id="airflow">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <span class="section-title" style="color:var(--purple)">Apache Airflow</span>
+    <span class="section-sub">DAGs · Operators · Sensors · XComs · Scheduling</span>
+  </div>
+  <div class="grid2" style="margin-bottom:12px">
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--purple)"></div><span class="card-label" style="color:var(--purple)">DAG Structure</span></div>
+      <div class="card-body">
+<pre><code><span class="kw">from</span> airflow <span class="kw">import</span> DAG
+<span class="kw">from</span> airflow.operators.python <span class="kw">import</span> PythonOperator
+<span class="kw">from</span> airflow.operators.bash <span class="kw">import</span> BashOperator
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta
+
+<span class="cm"># Default args — apply to all tasks</span>
+default_args <span class="op">=</span> {
+    <span class="st">"owner"</span>:            <span class="st">"mounika"</span>,
+    <span class="st">"retries"</span>:          <span class="nm">3</span>,
+    <span class="st">"retry_delay"</span>:      timedelta(minutes<span class="op">=</span><span class="nm">5</span>),
+    <span class="st">"email_on_failure"</span>: <span class="kw">True</span>,
+    <span class="st">"email"</span>:            [<span class="st">"alert@company.com"</span>],
+}
+
+<span class="kw">with</span> <span class="fn">DAG</span>(
+    dag_id<span class="op">=</span><span class="st">"sales_etl"</span>,
+    default_args<span class="op">=</span>default_args,
+    schedule_interval<span class="op">=</span><span class="st">"0 6 * * *"</span>,   <span class="cm"># 6am daily</span>
+    start_date<span class="op">=</span><span class="fn">datetime</span>(<span class="nm">2024</span>,<span class="nm">1</span>,<span class="nm">1</span>),
+    catchup<span class="op">=</span><span class="kw">False</span>,                    <span class="cm"># don't backfill</span>
+    tags<span class="op">=</span>[<span class="st">"sales"</span>,<span class="st">"etl"</span>],
+) <span class="kw">as</span> dag:
+
+    extract <span class="op">=</span> <span class="fn">PythonOperator</span>(
+        task_id<span class="op">=</span><span class="st">"extract"</span>,
+        python_callable<span class="op">=</span>extract_fn,
+    )
+    transform <span class="op">=</span> <span class="fn">PythonOperator</span>(
+        task_id<span class="op">=</span><span class="st">"transform"</span>,
+        python_callable<span class="op">=</span>transform_fn,
+    )
+    load <span class="op">=</span> <span class="fn">BashOperator</span>(
+        task_id<span class="op">=</span><span class="st">"load"</span>,
+        bash_command<span class="op">=</span><span class="st">"python load.py"</span>,
+    )
+
+    extract <span class="op">&gt;&gt;</span> transform <span class="op">&gt;&gt;</span> load  <span class="cm"># dependency</span></code></pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--pink)"></div><span class="card-label" style="color:var(--pink)">XComs, Sensors, Cron</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># XCom — pass small data between tasks</span>
+<span class="kw">def</span> <span class="fn">extract</span>(**context):
+    rows <span class="op">=</span> <span class="nm">5000</span>
+    context[<span class="st">"ti"</span>].<span class="fn">xcom_push</span>(key<span class="op">=</span><span class="st">"row_count"</span>, value<span class="op">=</span>rows)
+
+<span class="kw">def</span> <span class="fn">validate</span>(**context):
+    cnt <span class="op">=</span> context[<span class="st">"ti"</span>].<span class="fn">xcom_pull</span>(
+        task_ids<span class="op">=</span><span class="st">"extract"</span>, key<span class="op">=</span><span class="st">"row_count"</span>)
+    <span class="kw">assert</span> cnt <span class="op">&gt;</span> <span class="nm">0</span>, <span class="st">"No rows!"</span>
+
+<span class="cm"># S3 Sensor — wait for file</span>
+<span class="kw">from</span> airflow.providers.amazon.aws.sensors.s3 <span class="kw">import</span> S3KeySensor
+wait <span class="op">=</span> <span class="fn">S3KeySensor</span>(
+    task_id<span class="op">=</span><span class="st">"wait_for_file"</span>,
+    bucket_name<span class="op">=</span><span class="st">"my-bucket"</span>,
+    bucket_key<span class="op">=</span><span class="st">"data/{{ ds }}/file.csv"</span>,
+    aws_conn_id<span class="op">=</span><span class="st">"aws_default"</span>,
+    poke_interval<span class="op">=</span><span class="nm">60</span>,    <span class="cm"># check every 60s</span>
+    timeout<span class="op">=</span><span class="nm">3600</span>,        <span class="cm"># fail after 1hr</span>
+)
+
+<span class="cm"># Common cron expressions</span>
+<span class="cm"># "0 6 * * *"     → 6 AM daily</span>
+<span class="cm"># "0 6 * * 1"     → 6 AM every Monday</span>
+<span class="cm"># "0 0 1 * *"     → midnight, 1st of month</span>
+<span class="cm"># "@daily"        → midnight daily</span>
+<span class="cm"># "@hourly"       → every hour</span>
+<span class="cm"># "*/15 * * * *"  → every 15 minutes</span>
+
+<span class="cm"># Macros in templates</span>
+<span class="cm"># {{ ds }}         → execution date (YYYY-MM-DD)</span>
+<span class="cm"># {{ ds_nodash }}  → YYYYMMDD</span>
+<span class="cm"># {{ prev_ds }}    → previous execution date</span></code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 6. AWS ═══ -->
+<div class="section anchor" id="aws">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <span class="section-title" style="color:var(--yellow)">AWS for Data Engineers</span>
+    <span class="section-sub">boto3 · S3 · Glue · Lambda · Athena</span>
+  </div>
+  <div class="grid2" style="margin-bottom:12px">
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--yellow)"></div><span class="card-label" style="color:var(--yellow)">boto3 + S3</span></div>
+      <div class="card-body">
+<pre><code><span class="kw">import</span> boto3
+
+s3 <span class="op">=</span> boto3.<span class="fn">client</span>(<span class="st">"s3"</span>)
+
+<span class="cm"># Upload</span>
+s3.<span class="fn">upload_file</span>(<span class="st">"local.csv"</span>, <span class="st">"bucket"</span>, <span class="st">"key/file.csv"</span>)
+
+<span class="cm"># Download</span>
+s3.<span class="fn">download_file</span>(<span class="st">"bucket"</span>, <span class="st">"key/file.csv"</span>, <span class="st">"local.csv"</span>)
+
+<span class="cm"># List objects</span>
+resp <span class="op">=</span> s3.<span class="fn">list_objects_v2</span>(Bucket<span class="op">=</span><span class="st">"bucket"</span>, Prefix<span class="op">=</span><span class="st">"data/"</span>)
+<span class="kw">for</span> obj <span class="kw">in</span> resp.<span class="fn">get</span>(<span class="st">"Contents"</span>, []):
+    <span class="fn">print</span>(obj[<span class="st">"Key"</span>], obj[<span class="st">"Size"</span>])
+
+<span class="cm"># Read directly to Pandas (no download)</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+obj <span class="op">=</span> s3.<span class="fn">get_object</span>(Bucket<span class="op">=</span><span class="st">"bucket"</span>, Key<span class="op">=</span><span class="st">"file.csv"</span>)
+df  <span class="op">=</span> pd.<span class="fn">read_csv</span>(obj[<span class="st">"Body"</span>])
+
+<span class="cm"># Trigger Lambda</span>
+lam <span class="op">=</span> boto3.<span class="fn">client</span>(<span class="st">"lambda"</span>)
+lam.<span class="fn">invoke</span>(
+    FunctionName<span class="op">=</span><span class="st">"process_file"</span>,
+    InvocationType<span class="op">=</span><span class="st">"Event"</span>,    <span class="cm"># async</span>
+    Payload<span class="op">=</span>json.<span class="fn">dumps</span>({<span class="st">"key"</span>:<span class="st">"file.csv"</span>})
+)</code></pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--orange)"></div><span class="card-label" style="color:var(--orange)">Lambda + Glue + Athena</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># Lambda handler — triggered by S3 event</span>
+<span class="kw">def</span> <span class="fn">handler</span>(event, context):
+    bucket <span class="op">=</span> event[<span class="st">"Records"</span>][<span class="nm">0</span>][<span class="st">"s3"</span>][<span class="st">"bucket"</span>][<span class="st">"name"</span>]
+    key    <span class="op">=</span> event[<span class="st">"Records"</span>][<span class="nm">0</span>][<span class="st">"s3"</span>][<span class="st">"object"</span>][<span class="st">"key"</span>]
+    <span class="cm"># trigger Glue job</span>
+    glue <span class="op">=</span> boto3.<span class="fn">client</span>(<span class="st">"glue"</span>)
+    glue.<span class="fn">start_job_run</span>(
+        JobName<span class="op">=</span><span class="st">"my_etl_job"</span>,
+        Arguments<span class="op">=</span>{<span class="st">"--s3_key"</span>: key}
+    )
+
+<span class="cm"># Athena query via boto3</span>
+athena <span class="op">=</span> boto3.<span class="fn">client</span>(<span class="st">"athena"</span>)
+resp <span class="op">=</span> athena.<span class="fn">start_query_execution</span>(
+    QueryString<span class="op">=</span><span class="st">"SELECT * FROM sales WHERE dt='2024-01'"</span>,
+    QueryExecutionContext<span class="op">=</span>{<span class="st">"Database"</span>: <span class="st">"mydb"</span>},
+    ResultConfiguration<span class="op">=</span>{<span class="st">"OutputLocation"</span>: <span class="st">"s3://results/"</span>}
+)
+query_id <span class="op">=</span> resp[<span class="st">"QueryExecutionId"</span>]
+
+<span class="cm"># Glue job (PySpark) skeleton</span>
+<span class="kw">from</span> awsglue.context <span class="kw">import</span> GlueContext
+<span class="kw">from</span> awsglue.job <span class="kw">import</span> Job
+gc  <span class="op">=</span> <span class="fn">GlueContext</span>(SparkContext.<span class="fn">getOrCreate</span>())
+job <span class="op">=</span> <span class="fn">Job</span>(gc)
+df  <span class="op">=</span> gc.<span class="fn">create_dynamic_frame</span>.<span class="fn">from_catalog</span>(
+         database<span class="op">=</span><span class="st">"raw"</span>, table_name<span class="op">=</span><span class="st">"sales"</span>).toDF()</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 7. GCP ═══ -->
+<div class="section anchor" id="gcp">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <span class="section-title" style="color:var(--green)">GCP for Data Engineers</span>
+    <span class="section-sub">BigQuery · GCS · Python clients</span>
+  </div>
+  <div class="grid2" style="margin-bottom:12px">
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--green)"></div><span class="card-label" style="color:var(--green)">BigQuery Python client</span></div>
+      <div class="card-body">
+<pre><code><span class="kw">from</span> google.cloud <span class="kw">import</span> bigquery
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+client <span class="op">=</span> bigquery.<span class="fn">Client</span>(project<span class="op">=</span><span class="st">"my-project"</span>)
+
+<span class="cm"># Run query → DataFrame</span>
+df <span class="op">=</span> client.<span class="fn">query</span>(<span class="st">"""
+    SELECT dept, AVG(salary) as avg_sal
+    FROM `project.dataset.employees`
+    GROUP BY dept
+"""</span>).<span class="fn">to_dataframe</span>()
+
+<span class="cm"># Load DataFrame → BigQuery</span>
+job_cfg <span class="op">=</span> bigquery.<span class="fn">LoadJobConfig</span>(
+    write_disposition<span class="op">=</span><span class="st">"WRITE_TRUNCATE"</span>,  <span class="cm"># or APPEND</span>
+    autodetect<span class="op">=</span><span class="kw">True</span>,
+)
+client.<span class="fn">load_table_from_dataframe</span>(
+    df, <span class="st">"project.dataset.table"</span>, job_config<span class="op">=</span>job_cfg
+).<span class="fn">result</span>()   <span class="cm"># .result() waits for completion</span>
+
+<span class="cm"># Parameterized query (prevent injection)</span>
+query <span class="op">=</span> <span class="st">"SELECT * FROM t WHERE dt = @date"</span>
+config <span class="op">=</span> bigquery.<span class="fn">QueryJobConfig</span>(
+    query_parameters<span class="op">=</span>[
+        bigquery.<span class="fn">ScalarQueryParameter</span>(<span class="st">"date"</span>,<span class="st">"STRING"</span>,<span class="st">"2024-01"</span>)
+    ]
+)
+client.<span class="fn">query</span>(query, job_config<span class="op">=</span>config).<span class="fn">to_dataframe</span>()</code></pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--blue)"></div><span class="card-label" style="color:var(--blue)">GCS + BQ Patterns</span></div>
+      <div class="card-body">
+<pre><code><span class="kw">from</span> google.cloud <span class="kw">import</span> storage
+
+gcs <span class="op">=</span> storage.<span class="fn">Client</span>()
+bucket <span class="op">=</span> gcs.<span class="fn">bucket</span>(<span class="st">"my-bucket"</span>)
+
+<span class="cm"># Upload file</span>
+bucket.<span class="fn">blob</span>(<span class="st">"data/file.csv"</span>).<span class="fn">upload_from_filename</span>(<span class="st">"local.csv"</span>)
+
+<span class="cm"># Download file</span>
+bucket.<span class="fn">blob</span>(<span class="st">"data/file.csv"</span>).<span class="fn">download_to_filename</span>(<span class="st">"local.csv"</span>)
+
+<span class="cm"># List blobs</span>
+<span class="kw">for</span> b <span class="kw">in</span> gcs.<span class="fn">list_blobs</span>(<span class="st">"my-bucket"</span>, prefix<span class="op">=</span><span class="st">"data/"</span>):
+    <span class="fn">print</span>(b.name)
+
+<span class="cm"># GCS → BigQuery load job</span>
+job <span class="op">=</span> client.<span class="fn">load_table_from_uri</span>(
+    <span class="st">"gs://bucket/data/*.parquet"</span>,
+    <span class="st">"project.dataset.table"</span>,
+    job_config<span class="op">=</span>bigquery.<span class="fn">LoadJobConfig</span>(
+        source_format<span class="op">=</span>bigquery.SourceFormat.PARQUET,
+        write_disposition<span class="op">=</span><span class="st">"WRITE_APPEND"</span>
+    )
+)
+job.<span class="fn">result</span>()  <span class="cm"># wait</span>
+<span class="fn">print</span>(<span class="st">f"Loaded </span><span class="op">{</span>job.output_rows<span class="op">}</span><span class="st"> rows"</span>)</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 8. DATA QUALITY ═══ -->
+<div class="section anchor" id="quality">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <span class="section-title" style="color:var(--pink)">Data Quality & Testing</span>
+    <span class="section-sub">pytest · Great Expectations · Logging · Validation</span>
+  </div>
+  <div class="grid2" style="margin-bottom:12px">
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--pink)"></div><span class="card-label" style="color:var(--pink)">pytest</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># test_etl.py</span>
+<span class="kw">import</span> pytest
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> myetl <span class="kw">import</span> clean_salary, join_tables
+
+<span class="cm"># Basic test</span>
+<span class="kw">def</span> <span class="fn">test_clean_salary_removes_nulls</span>():
+    df_in  <span class="op">=</span> pd.<span class="fn">DataFrame</span>({<span class="st">"salary"</span>: [<span class="nm">1000</span>, <span class="kw">None</span>, <span class="nm">2000</span>]})
+    df_out <span class="op">=</span> <span class="fn">clean_salary</span>(df_in)
+    <span class="kw">assert</span> df_out[<span class="st">"salary"</span>].<span class="fn">isnull</span>().<span class="fn">sum</span>() <span class="op">==</span> <span class="nm">0</span>
+
+<span class="cm"># Fixture — reusable test data</span>
+<span class="op">@</span>pytest.fixture
+<span class="kw">def</span> <span class="fn">sample_df</span>():
+    <span class="kw">return</span> pd.<span class="fn">DataFrame</span>({
+        <span class="st">"id"</span>:[<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>], <span class="st">"salary"</span>:[<span class="nm">50000</span>,<span class="kw">None</span>,<span class="nm">80000</span>]})
+
+<span class="cm"># Parametrize — test multiple cases</span>
+<span class="op">@</span>pytest.<span class="fn">mark.parametrize</span>(<span class="st">"salary,expected"</span>,[
+    (<span class="nm">100000</span>, <span class="st">"senior"</span>),
+    (<span class="nm">60000</span>,  <span class="st">"mid"</span>),
+    (<span class="nm">30000</span>,  <span class="st">"junior"</span>),
+])
+<span class="kw">def</span> <span class="fn">test_grade</span>(salary, expected):
+    <span class="kw">assert</span> <span class="fn">get_grade</span>(salary) <span class="op">==</span> expected
+
+<span class="cm"># Run: pytest test_etl.py -v</span></code></pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--orange)"></div><span class="card-label" style="color:var(--orange)">Logging + Validation</span></div>
+      <div class="card-body">
+<pre><code><span class="kw">import</span> logging
+
+<span class="cm"># Setup structured logging</span>
+logging.<span class="fn">basicConfig</span>(
+    level<span class="op">=</span>logging.INFO,
+    format<span class="op">=</span><span class="st">"%(asctime)s %(levelname)s %(message)s"</span>
+)
+log <span class="op">=</span> logging.<span class="fn">getLogger</span>(<span class="fn">__name__</span>)
+
+log.<span class="fn">info</span>(<span class="st">f"Loaded </span><span class="op">{</span><span class="fn">len</span>(df)<span class="op">}</span><span class="st"> rows"</span>)
+log.<span class="fn">warning</span>(<span class="st">"Null salary detected"</span>)
+log.<span class="fn">error</span>(<span class="st">f"Load failed: </span><span class="op">{</span>e<span class="op">}</span><span class="st">"</span>)
+
+<span class="cm"># Data validation class</span>
+<span class="kw">def</span> <span class="fn">validate_df</span>(df, name):
+    <span class="kw">assert</span> <span class="fn">len</span>(df) <span class="op">&gt;</span> <span class="nm">0</span>,          <span class="st">f"</span><span class="op">{</span>name<span class="op">}</span><span class="st"> is empty"</span>
+    <span class="kw">assert</span> df[<span class="st">"id"</span>].<span class="fn">duplicated</span>().<span class="fn">sum</span>()<span class="op">==</span><span class="nm">0</span>, <span class="st">"Duplicate IDs"</span>
+    <span class="kw">assert</span> df[<span class="st">"salary"</span>].<span class="fn">isnull</span>().<span class="fn">sum</span>()<span class="op">==</span><span class="nm">0</span>, <span class="st">"Null salaries"</span>
+    <span class="kw">assert</span> (df[<span class="st">"salary"</span>] <span class="op">&gt;=</span> <span class="nm">0</span>).<span class="fn">all</span>(),  <span class="st">"Negative salary"</span>
+    log.<span class="fn">info</span>(<span class="st">f"</span><span class="op">{</span>name<span class="op">}</span><span class="st"> passed validation ✓"</span>)
+    <span class="kw">return</span> df
+
+<span class="cm"># Row count reconciliation</span>
+<span class="kw">def</span> <span class="fn">reconcile</span>(src, tgt, name):
+    <span class="kw">assert</span> <span class="fn">len</span>(src) <span class="op">==</span> <span class="fn">len</span>(tgt), \
+        <span class="st">f"</span><span class="op">{</span>name<span class="op">}</span><span class="st">: src=</span><span class="op">{</span><span class="fn">len</span>(src)<span class="op">}</span><span class="st"> tgt=</span><span class="op">{</span><span class="fn">len</span>(tgt)<span class="op">}</span><span class="st"> MISMATCH"</span></code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 9. DESIGN PATTERNS ═══ -->
+<div class="section anchor" id="patterns">
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <span class="section-title" style="color:var(--red)">DE Design Patterns</span>
+    <span class="section-sub">Idempotency · SCD · Partitioning · Backfill · Lambda/Kappa</span>
+  </div>
+  <div class="fw-card" style="margin-bottom:12px">
+    <div class="fw-head"><div class="card-dot" style="background:var(--red)"></div><span class="card-label">Idempotent ETL Pattern — safe to re-run, no duplicates</span></div>
+    <div class="fw-body">
+<pre><code><span class="cm"># BAD — INSERT every run creates duplicates</span>
+df.<span class="fn">to_sql</span>(<span class="st">"sales"</span>, con, if_exists<span class="op">=</span><span class="st">"append"</span>)
+
+<span class="cm"># GOOD — MERGE / upsert pattern (idempotent)</span>
+<span class="cm"># PySpark: use MERGE INTO Delta</span>
+<span class="cm"># Pandas: merge then deduplicate before writing</span>
+
+<span class="cm"># Idempotent S3 write — overwrite same partition</span>
+df.<span class="fn">write</span>.<span class="fn">mode</span>(<span class="st">"overwrite"</span>)\
+  .<span class="fn">partitionBy</span>(<span class="st">"year"</span>,<span class="st">"month"</span>,<span class="st">"day"</span>)\
+  .<span class="fn">parquet</span>(<span class="st">"s3://bucket/data/"</span>)
+<span class="cm"># Same day re-run overwrites same partition only</span></code></pre>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--purple)"></div><span class="card-label" style="color:var(--purple)">Partitioning Strategy</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># S3 / Parquet partition path pattern</span>
+<span class="cm"># s3://bucket/table/year=2024/month=01/day=15/</span>
+
+<span class="cm"># Pandas — write partitioned</span>
+df.<span class="fn">to_parquet</span>(<span class="st">"s3://out/"</span>,
+    partition_cols<span class="op">=</span>[<span class="st">"year"</span>,<span class="st">"month"</span>])
+
+<span class="cm"># PySpark — write partitioned</span>
+df.<span class="fn">write</span>.<span class="fn">partitionBy</span>(<span class="st">"year"</span>,<span class="st">"month"</span>)\
+   .<span class="fn">parquet</span>(<span class="st">"s3://out/"</span>)
+
+<span class="cm"># Read with partition pruning</span>
+df <span class="op">=</span> spark.read.<span class="fn">parquet</span>(<span class="st">"s3://out/"</span>)\
+          .<span class="fn">filter</span>(F.<span class="fn">col</span>(<span class="st">"year"</span>)<span class="op">==</span><span class="nm">2024</span>)
+<span class="cm"># Spark reads ONLY year=2024/ folder</span>
+
+<span class="cm"># Good partition columns:</span>
+<span class="cm"># ✓ date/time (year/month)</span>
+<span class="cm"># ✓ region, country</span>
+<span class="cm"># ✗ user_id (too many partitions)</span>
+<span class="cm"># ✗ timestamp (infinite cardinality)</span></code></pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--cyan)"></div><span class="card-label" style="color:var(--cyan)">Architecture Patterns</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># Lambda Architecture</span>
+<span class="cm"># Batch layer   → process all historical data (Spark)</span>
+<span class="cm"># Speed layer   → process recent data (Kafka/Flink)</span>
+<span class="cm"># Serving layer → merge both for queries</span>
+<span class="cm"># Downside: maintain TWO codebases</span>
+
+<span class="cm"># Kappa Architecture</span>
+<span class="cm"># Single streaming layer handles EVERYTHING</span>
+<span class="cm"># Reprocess history by replaying from Kafka</span>
+<span class="cm"># Simpler but harder to debug</span>
+
+<span class="cm"># Medallion Architecture (Databricks)</span>
+<span class="cm"># Bronze → raw ingest (no transforms)</span>
+<span class="cm"># Silver → cleaned, deduplicated, typed</span>
+<span class="cm"># Gold   → aggregated, business-ready</span>
+
+<span class="cm"># When to use what</span>
+<span class="cm"># Batch     → daily reports, DW loads</span>
+<span class="cm"># Streaming → fraud, real-time dashboard</span>
+<span class="cm"># Micro-batch → 5-min SLA, Spark Structured</span></code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 10. INTERVIEW QUICK REF ═══ -->
+<div class="section anchor" id="interview">
+  <div class="section-header">
+    <span class="section-num">10</span>
+    <span class="section-title" style="color:var(--green)">Interview Quick Reference</span>
+    <span class="section-sub">Most asked questions · SQL vs Python map · Common gotchas</span>
+  </div>
+
+  <div class="fw-card" style="margin-bottom:12px">
+    <div class="fw-head"><div class="card-dot" style="background:var(--green)"></div><span class="card-label">SQL → Python / Pandas / PySpark quick map</span></div>
+    <div class="fw-body">
+      <table class="tbl">
+        <tr><th>SQL</th><th>Pandas</th><th>PySpark</th></tr>
+        <tr><td>SELECT col</td><td>df["col"] or df[["a","b"]]</td><td>df.select("col")</td></tr>
+        <tr><td>WHERE x &gt; 5</td><td>df[df["x"] &gt; 5]</td><td>df.filter(F.col("x") &gt; 5)</td></tr>
+        <tr><td>GROUP BY + SUM</td><td>df.groupby("g")["v"].sum()</td><td>df.groupBy("g").agg(F.sum("v"))</td></tr>
+        <tr><td>JOIN</td><td>pd.merge(a, b, on="id", how="inner")</td><td>a.join(b, "id", "inner")</td></tr>
+        <tr><td>ORDER BY col DESC</td><td>df.sort_values("col", ascending=False)</td><td>df.orderBy(F.col("col").desc())</td></tr>
+        <tr><td>LIMIT 10</td><td>df.head(10)</td><td>df.limit(10)</td></tr>
+        <tr><td>DISTINCT</td><td>df.drop_duplicates()</td><td>df.distinct()</td></tr>
+        <tr><td>IS NULL</td><td>df["c"].isnull()</td><td>F.col("c").isNull()</td></tr>
+        <tr><td>COALESCE(a, 0)</td><td>df["a"].fillna(0)</td><td>F.coalesce(F.col("a"), F.lit(0))</td></tr>
+        <tr><td>CASE WHEN</td><td>apply(lambda x: ...)</td><td>F.when(...).otherwise(...)</td></tr>
+        <tr><td>ROW_NUMBER() OVER</td><td>groupby().rank()</td><td>F.row_number().over(Window...)</td></tr>
+        <tr><td>LAG(col,1)</td><td>df["col"].shift(1)</td><td>F.lag("col",1).over(w)</td></tr>
+        <tr><td>UNION ALL</td><td>pd.concat([a,b])</td><td>a.union(b)</td></tr>
+        <tr><td>COUNT(*)</td><td>len(df)</td><td>df.count()</td></tr>
+        <tr><td>ALTER TABLE ADD col</td><td>df["new"] = value</td><td>df.withColumn("new", expr)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="fw-card" style="margin-bottom:12px">
+    <div class="fw-head"><div class="card-dot" style="background:var(--red)"></div><span class="card-label">Top interview questions + one-line answers</span></div>
+    <div class="fw-body">
+      <table class="tbl">
+        <tr><th>Question</th><th>Answer (say this)</th></tr>
+        <tr><td>repartition() vs coalesce()?</td><td>repartition = full shuffle, increases or decreases. coalesce = no shuffle, only decreases. Use coalesce to reduce before write.</td></tr>
+        <tr><td>Lazy evaluation in Spark?</td><td>Transformations (filter, select) build a plan but don't execute. Actions (count, show, collect) trigger execution. Enables optimization.</td></tr>
+        <tr><td>broadcast join when?</td><td>When one DataFrame is small (&lt;100MB). Sends small table to all executors, avoids expensive shuffle.</td></tr>
+        <tr><td>Data skew solution?</td><td>Salting — add random suffix to skewed key, join, then aggregate again to merge salted results.</td></tr>
+        <tr><td>Idempotent pipeline?</td><td>Re-running produces same result. Use MERGE/upsert instead of INSERT, overwrite same partition, add unique constraint check.</td></tr>
+        <tr><td>SCD Type 2?</td><td>Keep history — add effective_date, end_date, is_current. New record inserts new row, old row gets end_date and is_current=false.</td></tr>
+        <tr><td>Exactly-once vs at-least-once?</td><td>At-least-once: may duplicate on retry (use dedup). Exactly-once: harder, needs idempotent writes + offset tracking.</td></tr>
+        <tr><td>Delta Lake ACID?</td><td>Atomicity (all or nothing), Consistency (constraints), Isolation (concurrent writes safe), Durability (committed = persisted). Implemented via transaction log.</td></tr>
+        <tr><td>Parquet vs CSV?</td><td>Parquet: columnar, compressed, schema-aware, predicate pushdown, 10x faster reads. CSV: human-readable, no schema. Use Parquet for all DE work.</td></tr>
+        <tr><td>Airflow catchup=True risk?</td><td>If start_date is old, Airflow backfills ALL missed runs at once. Can overwhelm system. Use catchup=False for new DAGs.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--yellow)"></div><span class="card-label" style="color:var(--yellow)">Common Gotchas</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># 1. Pandas modifies copy, not original</span>
+df2 <span class="op">=</span> df[df[<span class="st">"x"</span>]<span class="op">&gt;</span><span class="nm">5</span>]
+df2[<span class="st">"y"</span>] <span class="op">=</span> <span class="nm">1</span>   <span class="cm"># SettingWithCopyWarning!</span>
+<span class="cm"># Fix:</span>
+df2 <span class="op">=</span> df[df[<span class="st">"x"</span>]<span class="op">&gt;</span><span class="nm">5</span>].<span class="fn">copy</span>()
+
+<span class="cm"># 2. Spark collect() on large data = crash</span>
+df.<span class="fn">collect</span>()    <span class="cm"># pulls ALL data to driver</span>
+df.<span class="fn">show</span>(<span class="nm">20</span>)    <span class="cm"># safe — only 20 rows</span>
+
+<span class="cm"># 3. String comparison is case-sensitive</span>
+df[df[<span class="st">"dept"</span>]<span class="op">==</span><span class="st">"de"</span>]   <span class="cm"># misses "DE"</span>
+df[df[<span class="st">"dept"</span>].<span class="fn">str</span>.<span class="fn">upper</span>()<span class="op">==</span><span class="st">"DE"</span>]  <span class="cm"># correct</span>
+
+<span class="cm"># 4. Mutable default arguments</span>
+<span class="kw">def</span> <span class="fn">bad</span>(lst<span class="op">=</span>[]):  <span class="cm"># same list reused!</span>
+    lst.<span class="fn">append</span>(<span class="nm">1</span>); <span class="kw">return</span> lst
+<span class="kw">def</span> <span class="fn">good</span>(lst<span class="op">=</span><span class="kw">None</span>):  <span class="cm"># correct</span>
+    <span class="kw">if</span> lst <span class="kw">is</span> <span class="kw">None</span>: lst <span class="op">=</span> []
+    lst.<span class="fn">append</span>(<span class="nm">1</span>); <span class="kw">return</span> lst
+
+<span class="cm"># 5. Integer division</span>
+<span class="nm">7</span> <span class="op">/</span> <span class="nm">2</span>   <span class="cm"># 3.5  (float division)</span>
+<span class="nm">7</span> <span class="op">//</span> <span class="nm">2</span>  <span class="cm"># 3    (integer division)</span></code></pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-dot" style="background:var(--cyan)"></div><span class="card-label" style="color:var(--cyan)">Must-Know Built-ins</span></div>
+      <div class="card-body">
+<pre><code><span class="cm"># Essential Python built-ins for DE</span>
+<span class="fn">len</span>(x)              <span class="cm"># length / COUNT</span>
+<span class="fn">sum</span>(x)              <span class="cm"># SUM</span>
+<span class="fn">min</span>(x) / <span class="fn">max</span>(x)    <span class="cm"># MIN / MAX</span>
+<span class="fn">sorted</span>(x)           <span class="cm"># ORDER BY</span>
+<span class="fn">set</span>(x)              <span class="cm"># DISTINCT</span>
+<span class="fn">zip</span>(a,b)            <span class="cm"># iterate two lists</span>
+<span class="fn">enumerate</span>(x)        <span class="cm"># index + value</span>
+<span class="fn">map</span>(fn, x)          <span class="cm"># apply fn to each</span>
+<span class="fn">filter</span>(fn, x)       <span class="cm"># filter by fn</span>
+<span class="fn">any</span>(x) / <span class="fn">all</span>(x)    <span class="cm"># EXISTS / all true</span>
+<span class="fn">isinstance</span>(x, type) <span class="cm"># type check</span>
+<span class="fn">round</span>(x, n)         <span class="cm"># ROUND(x, n)</span>
+<span class="fn">abs</span>(x)              <span class="cm"># ABS()</span>
+
+<span class="cm"># Essential stdlib imports for DE</span>
+<span class="kw">import</span> os          <span class="cm"># file paths, env vars</span>
+<span class="kw">import</span> sys         <span class="cm"># command line args</span>
+<span class="kw">import</span> datetime    <span class="cm"># date manipulation</span>
+<span class="kw">import</span> re          <span class="cm"># regex / REGEXP</span>
+<span class="kw">import</span> hashlib     <span class="cm"># MD5/SHA checksums</span>
+<span class="kw">import</span> collections <span class="cm"># Counter, defaultdict</span>
+<span class="kw">import</span> itertools   <span class="cm"># chain, product</span>
+<span class="kw">import</span> functools   <span class="cm"># lru_cache, reduce</span>
+<span class="kw">import</span> pathlib     <span class="cm"># Path() — better os.path</span></code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /page -->
+
+<script>
+// Highlight active nav on scroll
+const sections = document.querySelectorAll('.anchor');
+const links = document.querySelectorAll('.nav-link');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      links.forEach(l=>l.classList.remove('active'));
+      const active = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
+      if(active) active.classList.add('active');
+    }
+  });
+}, {rootMargin:'-48px 0px -80% 0px'});
+sections.forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>
