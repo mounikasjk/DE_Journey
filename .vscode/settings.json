@@ -7,7 +7,7 @@
     "python.testing.pytestEnabled": false,
     "editor.quickSuggestions": false,
     "editor.suggestOnTriggerCharacters": false,
-    "editor.inlineSuggest.enabled": false
+    "editor.inlineSuggest.enabled": false,
     "python.testing.unittestArgs": [
         "-v",
         "-s",
