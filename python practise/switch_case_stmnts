@@ -1,0 +1,23 @@
+# #### match case example ###
+# 
+# """ code =200
+# match code:
+#     case 200:
+#         print("response code =200")
+#     case 404:
+#         print("response code =404")
+#     case 500:
+#         print("response code =500")
+#     case _:
+#         print("Unknown status code")
+        
+#          """
+#### while loop ####
+# while True:
+#     name=input("Enter your Name:")
+#     if name !="mounika":
+#         continue
+#     pwd=input("Enter your pwd:")
+#     if pwd =="kanvi":
+#         break
+# print("access granted")
