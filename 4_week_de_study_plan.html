@@ -1,0 +1,940 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.root{padding:1.5rem 0;max-width:720px}
+.header{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem 1.5rem;margin-bottom:2rem}
+.header-stats{display:flex;gap:2rem;flex-wrap:wrap;margin-top:.75rem}
+.stat{display:flex;flex-direction:column}
+.stat-val{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.stat-lbl{font-size:12px;color:var(--color-text-secondary);margin-top:2px}
+.week-tabs{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap}
+.tab{padding:6px 16px;border-radius:20px;border:0.5px solid var(--color-border-secondary);font-size:13px;cursor:pointer;background:var(--color-background-primary);color:var(--color-text-secondary);transition:all .15s}
+.tab.active{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
+.week-panel{display:none}
+.week-panel.active{display:block}
+.week-header{margin-bottom:1.25rem}
+.week-title{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.week-meta{font-size:13px;color:var(--color-text-secondary);margin-top:4px}
+.day-block{margin-bottom:1.75rem}
+.day-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:.75rem;padding-bottom:6px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.item{display:flex;gap:12px;padding:.75rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);margin-bottom:8px;position:relative}
+.item.practice{background:var(--color-background-success);border-color:var(--color-border-success)}
+.item.break-item{background:var(--color-background-secondary);border-color:var(--color-border-tertiary)}
+.item.missing{background:var(--color-background-warning);border-color:var(--color-border-warning)}
+.item-left{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:20px;padding-top:2px}
+.dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--color-border-secondary);background:var(--color-background-primary);flex-shrink:0}
+.item.practice .dot{border-color:#3B6D11;background:var(--color-background-success)}
+.item.break-item .dot{background:#c0dd97;border-color:#639922}
+.item.missing .dot{border-color:#BA7517;background:var(--color-background-warning)}
+.item-body{flex:1;min-width:0}
+.item-title{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.item-sub{font-size:13px;color:var(--color-text-secondary);line-height:1.5}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:5px}
+.badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:500}
+.badge-video{background:#E6F1FB;color:#185FA5}
+.badge-practice{background:#EAF3DE;color:#3B6D11}
+.badge-read{background:#EEEDFE;color:#534AB7}
+.badge-new{background:#FAEEDA;color:#854F0B}
+.badge-time{background:var(--color-background-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary)}
+.practice-tag{font-size:11px;font-weight:500;color:#3B6D11;margin-bottom:4px;display:flex;align-items:center;gap:4px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:1.5rem;padding:.75rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-secondary)}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+</style>
+
+<div class="root">
+<h2 class="sr-only">4-week data engineering study plan with theory and practice blocks</h2>
+
+<div class="header">
+  <div style="font-size:14px;color:var(--color-text-secondary)">Data Engineering Interview Prep — Full 4-Week Plan</div>
+  <div class="header-stats">
+    <div class="stat"><span class="stat-val">~52 hrs</span><span class="stat-lbl">total theory</span></div>
+    <div class="stat"><span class="stat-val">~30 hrs</span><span class="stat-lbl">practice added</span></div>
+    <div class="stat"><span class="stat-val">4 weeks</span><span class="stat-lbl">28 days</span></div>
+    <div class="stat"><span class="stat-val">Week 4</span><span class="stat-lbl">new — SQL + missing topics</span></div>
+  </div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#185FA5"></div> Theory / video</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#3B6D11"></div> Practice (new!)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#BA7517"></div> Missing topic</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#888780"></div> Break</div>
+</div>
+
+<div class="week-tabs">
+  <div class="tab active" onclick="showWeek(0)">Week 1 — Python + Pandas</div>
+  <div class="tab" onclick="showWeek(1)">Week 2 — PySpark</div>
+  <div class="tab" onclick="showWeek(2)">Week 3 — SQL + Integration</div>
+  <div class="tab" onclick="showWeek(3)">Week 4 — Missing + SQL Depth</div>
+</div>
+
+<!-- WEEK 1 -->
+<div class="week-panel active" id="w0">
+  <div class="week-header">
+    <div class="week-title">Week 1 — Python + Pandas</div>
+    <div class="week-meta">Days 1–7 · ~14 hrs theory + ~8 hrs practice · 4 hrs/day weekdays, 8–10 hrs weekend</div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Day 1 — Python basics (4 hrs available)</div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1 hr video</span></div>
+        <div class="item-title">Variables, data types, operators, keywords, I/O</div>
+        <div class="item-sub">Corey Schafer — first 5 Python playlist videos (~10–12 min each). Watch at 1.25x, code every example. ~80 min total.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">45 min</span></div>
+        <div class="item-title">Variables + types drill</div>
+        <div class="item-sub">Write 10 small scripts: type conversions, string formatting, input/output. Then solve 3 easy HackerRank Python challenges.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Break — 10 min</div><div class="item-sub">Stand up, walk, water. No screen.</div></div>
+    </div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1 hr video</span></div>
+        <div class="item-title">Conditionals, loops, functions</div>
+        <div class="item-sub">Corey Schafer — next 3 videos (~15 min each). ~80 min with coding.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">40 min</span></div>
+        <div class="item-title">Functions + loops drill</div>
+        <div class="item-sub">Write 3 functions after each video. Build a FizzBuzz variant, a prime checker, and a simple number pyramid loop.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Break — 15 min</div><div class="item-sub">End of session 1. Eat, move.</div></div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Day 2 — Python data structures (4 hrs)</div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1.5 hrs video</span></div>
+        <div class="item-title">Strings, lists, tuples, sets, dicts, arrays</div>
+        <div class="item-sub">Corey Schafer — 6 structure videos (~15 min each). ~2 hrs with coding.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">50 min</span></div>
+        <div class="item-title">Data structures drill</div>
+        <div class="item-sub">Solve 5 LeetCode easy problems using lists/dicts/sets (Two Sum, Valid Anagram, Contains Duplicate, etc.). Focus on choosing the right structure.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Break — 10 min</div></div>
+    </div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">40 min video</span></div>
+        <div class="item-title">Exception handling, modules</div>
+        <div class="item-sub">Corey Schafer — 2 videos (~20 min each). Important for pipeline error handling in DE. ~55 min with coding.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">30 min</span></div>
+        <div class="item-title">Exception handling mini-project</div>
+        <div class="item-sub">Build a file-reader script with proper try/except/finally blocks. Handle FileNotFoundError, ValueError, and a custom exception class.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Day 3 — Python advanced (4 hrs)</div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">30 min video</span></div>
+        <div class="item-title">CSV / JSON handling</div>
+        <div class="item-sub">Corey Schafer — 2 short videos (~15 min each).</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">40 min</span></div>
+        <div class="item-title">CSV ↔ JSON converter</div>
+        <div class="item-sub">Build a mini pipeline: read a CSV → transform → write as JSON. Then reverse it. Add error handling. This pattern appears constantly in DE interviews.</div>
+      </div>
+    </div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">45 min video</span></div>
+        <div class="item-title">Comprehensions, lambda, map, filter</div>
+        <div class="item-sub">Corey Schafer — 3 videos (~15 min each). These appear in DE coding rounds constantly.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">35 min</span></div>
+        <div class="item-title">Functional Python drill</div>
+        <div class="item-sub">Rewrite 5 for-loop solutions using list comprehensions, map, filter, lambda. Time both. Explain the difference out loud — interviewers ask this.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Break — 10 min</div></div>
+    </div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">35 min video</span></div>
+        <div class="item-title">Iterators & generators</div>
+        <div class="item-sub">Corey Schafer — 2 videos. Generators are a frequent interview question. ~50 min with coding.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">30 min</span></div>
+        <div class="item-title">Generator practice</div>
+        <div class="item-sub">Build a generator that reads a large CSV line-by-line without loading it fully. Then write one for Fibonacci. Explain lazy evaluation to yourself out loud.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Days 4–5 — Pandas core (4 hrs/day)</div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1.5 hrs video</span></div>
+        <div class="item-title">DataFrame basics, filtering, selection</div>
+        <div class="item-sub">Data School (Kevin Markham) — first 6 Pandas videos (~15 min each). Use Kaggle Titanic dataset. Code every operation.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">50 min</span></div>
+        <div class="item-title">DataFrame operations on real data</div>
+        <div class="item-sub">Load Titanic CSV. Answer 10 questions using loc/iloc/query: "passengers above 30 in 1st class", "top 5 cheapest fares", etc. No peeking at solutions first.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Break — 10 min</div></div>
+    </div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1 hr video</span></div>
+        <div class="item-title">GroupBy + aggregation, joins / merge</div>
+        <div class="item-sub">Data School — GroupBy series + merge/join videos.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">45 min</span></div>
+        <div class="item-title">GroupBy + merge challenge</div>
+        <div class="item-sub">Merge 2 Kaggle DataFrames. Then: group by multiple columns, compute weighted averages, pivot the result. Explain what merge types (inner/left/outer) do differently.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Break — 15 min</div></div>
+    </div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1 hr video</span></div>
+        <div class="item-title">Missing data, duplicates, sorting, ranking</div>
+        <div class="item-sub">Data School — Day 5 morning session. Introduce deliberate nulls and handle them.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">40 min</span></div>
+        <div class="item-title">Data quality drill</div>
+        <div class="item-sub">Take a clean dataset, deliberately corrupt it (nulls, duplicates, wrong types), then clean it back. This mirrors real DE pipeline work and interview scenarios.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Days 6–7 — Pandas deep (weekend: 8–10 hrs/day)</div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1.5 hrs video</span></div>
+        <div class="item-title">Apply vs vectorization, string ops, datetime</div>
+        <div class="item-sub">Data School — apply(), str accessor, datetime accessor videos. Vectorization is a high-value interview topic.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">60 min</span></div>
+        <div class="item-title">Apply vs vectorization benchmark</div>
+        <div class="item-sub">Write the same transformation 3 ways: for-loop, apply(), and vectorized. Time each on 100k rows. Write a 3-line explanation of why vectorization wins. String ops: parse messy email column, extract domains, flag invalid entries.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Break — 20 min</div></div>
+    </div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1 hr video</span></div>
+        <div class="item-title">Read/write files, data cleaning pipeline</div>
+        <div class="item-sub">Data School — file I/O videos + build your own pipeline.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">90 min</span></div>
+        <div class="item-title">Weekend project — full cleaning pipeline</div>
+        <div class="item-sub">Raw CSV → clean (nulls, types, duplicates) → aggregate (groupby + stats) → write output. Time yourself. Push to GitHub. This is your first portfolio piece.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WEEK 2 -->
+<div class="week-panel" id="w1">
+  <div class="week-header">
+    <div class="week-title">Week 2 — PySpark</div>
+    <div class="week-meta">Days 8–14 · ~12 hrs theory + ~9 hrs practice · PySpark is the highest-weight DE interview topic</div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Day 8 — SparkSession + DataFrame basics (4 hrs)</div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1.5 hrs video</span></div>
+        <div class="item-title">SparkSession basics + PySpark DataFrame operations</div>
+        <div class="item-sub">YouTube: "PySpark Tutorial for Beginners" (Krish Naik or Data with Zach). Set up locally or use Databricks Community Edition free.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">50 min</span></div>
+        <div class="item-title">SparkSession + schema drill</div>
+        <div class="item-sub">Create a SparkSession, load a CSV with explicit schema, inspect it. Then load the same data 3 ways: infer schema, explicit schema, StructType. Explain why explicit schemas matter in production.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Break — 10 min</div></div>
+    </div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1 hr video</span></div>
+        <div class="item-title">Filtering + GroupBy + aggregations</div>
+        <div class="item-sub">Replicate everything you did in Pandas — now in PySpark. Notice the syntax differences.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">45 min</span></div>
+        <div class="item-title">Pandas → PySpark translation exercise</div>
+        <div class="item-sub">Take your Week 1 Pandas notebook. Rewrite every operation in PySpark. Groupby, filter, agg. Write a cheat-sheet of equivalent syntax side by side.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Day 9 — Joins + window functions (4 hrs)</div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1 hr video</span></div>
+        <div class="item-title">Joins in PySpark</div>
+        <div class="item-sub">Inner, left, right, outer, cross, semi, anti joins. Know broadcast join — it's an interview staple.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">45 min</span></div>
+        <div class="item-title">Join types + broadcast join drill</div>
+        <div class="item-sub">Create 2 DataFrames with intentional overlaps and nulls. Run all 6 join types and observe differences in row counts. Implement a broadcast join. Explain when you'd use each.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Break — 10 min</div></div>
+    </div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1 hr video</span></div>
+        <div class="item-title">Window functions</div>
+        <div class="item-sub">YouTube: PySpark window functions tutorial. rank(), dense_rank(), row_number(), lag(), lead(). These appear in almost every DE interview.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">50 min</span></div>
+        <div class="item-title">Window function interview problems</div>
+        <div class="item-sub">Solve 3 classic problems: (1) rank employees by salary within department, (2) find running total, (3) find previous month's sales with lag(). These exact patterns come up in interviews.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Day 10 — Nulls + UDFs (4 hrs)</div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1 hr video</span></div>
+        <div class="item-title">Handling nulls + UDF vs built-in functions</div>
+        <div class="item-sub">Know why UDFs are slow (JVM serialization) and when built-ins replace them. This is a classic interview trap question.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">50 min</span></div>
+        <div class="item-title">UDF vs built-in benchmark</div>
+        <div class="item-sub">Write a transformation as a UDF and as a built-in function on 500k rows. Time both. Practice explaining "UDFs break Spark's optimization because…" out loud for 2 minutes.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Break — 15 min</div></div>
+    </div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">45 min video</span></div>
+        <div class="item-title">Lazy evaluation + Caching / Persistence</div>
+        <div class="item-sub">Understand the DAG, transformations vs actions. When to cache vs persist. Memory storage levels.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">40 min</span></div>
+        <div class="item-title">DAG + caching exercise</div>
+        <div class="item-sub">Build a pipeline with 5 transformations. Print the execution plan (explain()). Add cache() midway and compare re-run time. Explain the DAG to yourself like it's a mock interview.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Day 11 — Partitioning + Performance (4 hrs)</div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1.5 hrs video</span></div>
+        <div class="item-title">Partitioning concepts + performance optimization basics</div>
+        <div class="item-sub">repartition vs coalesce, partition pruning, shuffle, skew. Reading/writing Parquet with partitionBy. This is dense — take notes.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">60 min</span></div>
+        <div class="item-title">Partitioning + read/write drill</div>
+        <div class="item-sub">Write a DataFrame partitioned by year/month. Read it back with partition filter. Compare query plans with and without partition pruning. Write Parquet vs CSV and compare file sizes.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Break — 15 min</div></div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Days 12–14 — PySpark deep + weekend project</div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1 hr video</span></div>
+        <div class="item-title">Reading/writing data — all formats</div>
+        <div class="item-sub">CSV, JSON, Parquet, Delta (if time). Schema evolution, mode (overwrite/append), options.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">45 min</span></div>
+        <div class="item-title">Format comparison exercise</div>
+        <div class="item-sub">Write the same 1M-row dataset as CSV, JSON, and Parquet. Compare: file size, read time, and ability to push filters down. Record results — this becomes a talking point in interviews.</div>
+      </div>
+    </div>
+    <div class="item practice" style="border-color:#0F6E56">
+      <div class="item-left"><div class="dot" style="border-color:#0F6E56"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-trophy" aria-hidden="true"></i> weekend project</div>
+        <div class="badges"><span class="badge badge-practice">3–4 hrs</span></div>
+        <div class="item-title">End-to-end PySpark pipeline</div>
+        <div class="item-sub">Raw data → ingest → clean (nulls, types) → transform (groupby, window, join) → write partitioned Parquet. Add schema validation. Push to GitHub with a README explaining each step. This is portfolio project #2.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WEEK 3 -->
+<div class="week-panel" id="w2">
+  <div class="week-header">
+    <div class="week-title">Week 3 — SQL + Python Integration</div>
+    <div class="week-meta">Days 15–21 · ~8 hrs theory + ~3 hrs missing topics + ~7 hrs practice</div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Day 15 — SQL + Python integration (4 hrs)</div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1.5 hrs video</span></div>
+        <div class="item-title">SQLAlchemy, psycopg2, pandas.read_sql, SparkSQL</div>
+        <div class="item-sub">Codebasics YouTube — SQL + Python integration playlist. Full round-trip: Python → SQL → DataFrame.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">60 min</span></div>
+        <div class="item-title">Python ↔ SQL full round-trip</div>
+        <div class="item-sub">Connect to a SQLite DB using SQLAlchemy. Write a Python script that: inserts 10k rows, runs a SELECT with a join, pulls results into a Pandas DataFrame, transforms it, writes back. This exact pattern is asked in DE take-home tests.</div>
+      </div>
+    </div>
+    <div class="item missing">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-new">missing topic</span><span class="badge badge-time">45 min</span></div>
+        <div class="item-title">File formats — Parquet vs CSV vs Avro vs ORC</div>
+        <div class="item-sub">Read Apache Parquet docs + dataengineering.wiki article on file formats. Columnar vs row-based, compression, schema evolution.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">30 min</span></div>
+        <div class="item-title">File formats flashcard drill</div>
+        <div class="item-sub">Create a comparison table: Parquet vs CSV vs Avro vs ORC across 5 dimensions. Practice answering "when would you use Parquet over CSV?" out loud for 2 minutes without notes.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Break — 10 min</div></div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Day 16 — Data transformation thinking (4 hrs)</div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-read">1 hr reading</span></div>
+        <div class="item-title">SCD types 1/2/3, star vs snowflake, ETL vs ELT, idempotency</div>
+        <div class="item-sub">dataengineering.wiki/Concepts. Draw diagrams by hand. Explain each out loud. ~90 min.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">45 min</span></div>
+        <div class="item-title">Schema design + SCD mock answers</div>
+        <div class="item-sub">Draw a star schema for an e-commerce system by hand. Then answer these out loud: "Design a customer dimension that tracks address changes" (SCD2). "When would you use ELT over ETL?" Time your answers to under 2 minutes each.</div>
+      </div>
+    </div>
+    <div class="item missing">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-new">missing topic</span><span class="badge badge-time">45 min</span></div>
+        <div class="item-title">OLAP vs OLTP, data warehouse vs data lake vs lakehouse</div>
+        <div class="item-sub">DataCamp blog: "OLTP vs OLAP" + "Data Lakehouse Architecture" (free articles). Every DE interview has at least one question on this.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">30 min</span></div>
+        <div class="item-title">OLAP/OLTP verbal drill</div>
+        <div class="item-sub">Answer these without notes: "A company asks you to design storage for real-time transactions AND historical analytics. What do you recommend and why?" Practice until your answer is clear and under 90 seconds.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Break — 10 min</div></div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Day 17 — System design concepts (4 hrs)</div>
+    <div class="item missing">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-new">missing topic</span><span class="badge badge-time">1 hr read</span></div>
+        <div class="item-title">Batch vs streaming — when to use which</div>
+        <div class="item-sub">dataengineeracademy.com/blog/data-engineering-system-design-interview-questions. Know latency, throughput, use cases. Kafka conceptually (you don't need to code it).</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">30 min</span></div>
+        <div class="item-title">Batch vs streaming verbal practice</div>
+        <div class="item-sub">Answer out loud: "Design a pipeline for real-time fraud detection." Then: "Design one for monthly sales reports." Explain why the approach differs. Record yourself if possible.</div>
+      </div>
+    </div>
+    <div class="item missing">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-new">missing topic</span><span class="badge badge-time">45 min</span></div>
+        <div class="item-title">Orchestration tools — Airflow basics</div>
+        <div class="item-sub">YouTube: "Apache Airflow in 20 minutes". Know: what a DAG is, task dependencies, retries, scheduling. You don't need to build one — explain it confidently.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">25 min</span></div>
+        <div class="item-title">Airflow DAG design on paper</div>
+        <div class="item-sub">Draw a DAG for: extract from API → validate → transform → load to DB → notify. Label task types, dependencies, and retry behavior. Practice explaining it to an interviewer.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Break — 15 min</div></div>
+    </div>
+    <div class="item missing">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-new">missing topic</span><span class="badge badge-time">45 min</span></div>
+        <div class="item-title">Database indexing + query optimization</div>
+        <div class="item-sub">DataCamp "SQL Performance" article + practice 3 slow-query rewrites on LeetCode. B-tree indexes, partition pruning, predicate pushdown.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">40 min</span></div>
+        <div class="item-title">Query optimization rewrites</div>
+        <div class="item-sub">Take 3 slow SQL queries from LeetCode. Rewrite each to use indexes, avoid full scans, and push predicates down. Explain the before/after to yourself. This "before/after query rewrite" pattern is a common interview question.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Day 18 — Data quality + observability (4 hrs)</div>
+    <div class="item missing">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-new">missing topic</span><span class="badge badge-time">1 hr read</span></div>
+        <div class="item-title">Data quality, dbt basics, SLAs, data lineage</div>
+        <div class="item-sub">interviewquery.com/p/data-engineer-interview-questions — Data Quality section. Know: what dbt tests do, detecting anomalies, SLA breach handling, data lineage concepts.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">40 min</span></div>
+        <div class="item-title">Data quality incident mock answer</div>
+        <div class="item-sub">Answer out loud: "You wake up and your pipeline's output has 30% fewer rows than yesterday. Walk me through how you debug it." Build a mental checklist: source data, transformations, joins, filters, schema changes.</div>
+      </div>
+    </div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-time">2 hrs</span></div>
+        <div class="item-title">Weak spot review + verbal practice</div>
+        <div class="item-sub">Your own notes — explain every concept aloud for 2 min each. If you stammer, that's a gap. Go back.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Break — 20 min</div></div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Days 19–21 — Mock + final project (weekend)</div>
+    <div class="item practice" style="border-color:#0F6E56">
+      <div class="item-left"><div class="dot" style="border-color:#0F6E56"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-trophy" aria-hidden="true"></i> capstone</div>
+        <div class="badges"><span class="badge badge-practice">Weekend</span></div>
+        <div class="item-title">Full mock interview simulation + capstone project</div>
+        <div class="item-sub">StratasScratch + DataLemur + your own pipeline project pushed to GitHub. Day 20: timed mock — SQL + Python + 1 system design question. Day 21: light review only, rest.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WEEK 4 -->
+<div class="week-panel" id="w3">
+  <div class="week-header">
+    <div class="week-title">Week 4 — SQL Deep Dive + Integration + Final Polish</div>
+    <div class="week-meta">Days 22–28 · NEW week · SQL mastery + integration projects + interview simulation · ~10 hrs theory + ~10 hrs practice</div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Day 22 — SQL foundations + intermediate (4 hrs)</div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1.5 hrs video</span></div>
+        <div class="item-title">SQL basics → intermediate: SELECT, WHERE, GROUP BY, HAVING, ORDER BY, subqueries</div>
+        <div class="item-sub">Mode Analytics SQL Tutorial (free) or Zach Wilson's SQL playlist. Focus on writing every query yourself, not just watching.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">60 min</span></div>
+        <div class="item-title">SQL foundations drill — 15 problems</div>
+        <div class="item-sub">DataLemur or HackerRank SQL: solve 15 easy-medium problems. Focus on: GROUP BY + HAVING (not WHERE), nested subqueries, filtering aggregates. Write each solution without hints first.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Break — 10 min</div></div>
+    </div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1 hr video</span></div>
+        <div class="item-title">JOINs deep dive — all types + self joins + anti joins</div>
+        <div class="item-sub">Inner, left, right, full outer, cross, self, anti. Draw Venn diagrams for each. Understand NULL handling in joins.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">50 min</span></div>
+        <div class="item-title">JOIN types problem set</div>
+        <div class="item-sub">Solve 10 join-heavy problems on StratasScratch. Include at least 2 self-join problems (employee hierarchy, finding pairs). Explain why you chose each join type.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Day 23 — Window functions + CTEs (4 hrs)</div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1.5 hrs video</span></div>
+        <div class="item-title">Window functions — ROW_NUMBER, RANK, DENSE_RANK, LAG, LEAD, NTILE, running totals</div>
+        <div class="item-sub">YouTube: "SQL Window Functions" by Alex the Analyst or Data with Baraa. These appear in 80%+ of DE SQL interviews.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">60 min</span></div>
+        <div class="item-title">Window function interview classics</div>
+        <div class="item-sub">Solve these 5 classics: (1) top N per group, (2) running total, (3) month-over-month growth using LAG, (4) deduplicate with ROW_NUMBER, (5) percentile bucket with NTILE. These exact patterns appear repeatedly.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Break — 10 min</div></div>
+    </div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1 hr video</span></div>
+        <div class="item-title">CTEs, recursive CTEs, query structuring</div>
+        <div class="item-sub">WITH clauses for readability + recursive CTEs for hierarchical data. When CTEs vs subqueries vs temp tables.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">50 min</span></div>
+        <div class="item-title">CTE refactoring exercise</div>
+        <div class="item-sub">Take 3 complex subquery solutions you wrote earlier. Refactor each into clean CTEs. Then solve 1 recursive CTE problem: generate an employee org chart or date sequence. Explain the readability difference.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Day 24 — SQL + Python integration depth (4 hrs)</div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1 hr video</span></div>
+        <div class="item-title">SparkSQL + SQL on DataFrames — createOrReplaceTempView, spark.sql()</div>
+        <div class="item-sub">Running SQL queries on PySpark DataFrames. When to use SparkSQL vs DataFrame API. Combining both in a single pipeline.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">60 min</span></div>
+        <div class="item-title">SparkSQL mixed pipeline</div>
+        <div class="item-sub">Load a dataset in PySpark. Solve 5 problems using the DataFrame API, then solve the same 5 using SparkSQL (createOrReplaceTempView + spark.sql). Compare syntax. Build a hybrid pipeline that uses both in sequence.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Break — 15 min</div></div>
+    </div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-video">1 hr video</span></div>
+        <div class="item-title">pandas.read_sql + SQLAlchemy + connection pooling</div>
+        <div class="item-sub">Production patterns: engine creation, connection strings, parameterized queries (avoiding SQL injection), reading query results into DataFrames, writing back with to_sql.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">50 min</span></div>
+        <div class="item-title">SQLAlchemy mini-ETL project</div>
+        <div class="item-sub">Build: Python reads from a CSV → inserts into SQLite via SQLAlchemy → runs a window function SQL query → pulls results into Pandas → applies a transformation → writes back to DB. This full cycle is a common take-home test.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Day 25 — Advanced SQL + performance (4 hrs)</div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-read">1 hr reading</span></div>
+        <div class="item-title">Query execution plans, indexes deep dive, query optimization patterns</div>
+        <div class="item-sub">EXPLAIN / EXPLAIN ANALYZE output. B-tree vs hash vs partial indexes. When indexes hurt. Covering indexes. Partition pruning in SQL.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">60 min</span></div>
+        <div class="item-title">Query optimization challenge</div>
+        <div class="item-sub">Set up PostgreSQL locally (or use db-fiddle.com). Write 3 intentionally slow queries. Run EXPLAIN. Add appropriate indexes. Run EXPLAIN again. Document the before/after cost estimates. Practice explaining this to an interviewer — it's a direct interview question.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Break — 15 min</div></div>
+    </div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-read">45 min</span></div>
+        <div class="item-title">SQL interview pattern review — top 20 patterns</div>
+        <div class="item-sub">DataLemur "SQL Interview Questions" cheat sheet. Review: consecutive dates, gaps and islands, median, mode, cumulative distribution, pivoting, unpivoting.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-code" aria-hidden="true"></i> practice</div>
+        <div class="badges"><span class="badge badge-practice">50 min</span></div>
+        <div class="item-title">Hard SQL problem set</div>
+        <div class="item-sub">Solve 5 hard-level problems on DataLemur or StratasScratch. Focus on: consecutive streak problems, gaps-and-islands, median calculation. Time yourself — aim for under 15 min per problem.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-label">Days 26–28 — Full integration + mock interviews (weekend)</div>
+    <div class="item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="badges"><span class="badge badge-time">2 hrs</span></div>
+        <div class="item-title">Weak spot audit across all 4 weeks</div>
+        <div class="item-sub">Go through every topic. Rate confidence 1–5. All topics rated 1–3 get a focused 30-min review session. Don't review what you already know well.</div>
+      </div>
+    </div>
+    <div class="item practice" style="border-color:#0F6E56">
+      <div class="item-left"><div class="dot" style="border-color:#0F6E56"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-trophy" aria-hidden="true"></i> capstone project #3</div>
+        <div class="badges"><span class="badge badge-practice">4–5 hrs</span></div>
+        <div class="item-title">Full stack DE pipeline — Python + SQL + PySpark</div>
+        <div class="item-sub">Build an end-to-end pipeline: ingest raw data (CSV/API) → Python cleaning → load to SQLite/Postgres → SQL transformations (window functions, CTEs) → PySpark aggregations → write Parquet output. Push to GitHub with a README that explains architecture decisions. This becomes your interview talking piece.</div>
+      </div>
+    </div>
+    <div class="item practice">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body">
+        <div class="practice-tag"><i class="ti ti-microphone" aria-hidden="true"></i> mock interviews</div>
+        <div class="badges"><span class="badge badge-practice">3 hrs</span></div>
+        <div class="item-title">Day 27 — full timed mock interview</div>
+        <div class="item-sub">90 min: 3 SQL problems (timed, no hints) + 1 system design question + 3 verbal concept questions. Day 28: review answers, identify gaps, light rest. You are interview-ready.</div>
+      </div>
+    </div>
+    <div class="item break-item">
+      <div class="item-left"><div class="dot"></div></div>
+      <div class="item-body"><div class="item-title">Day 28 — light review + rest</div><div class="item-sub">Don't cram. Review your GitHub projects. Read your own notes once. Sleep well. You've done the work.</div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function showWeek(idx){
+  document.querySelectorAll('.week-panel').forEach((p,i)=>{
+    p.classList.toggle('active', i===idx);
+  });
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    t.classList.toggle('active', i===idx);
+  });
+}
+</script>
