@@ -1,0 +1,90 @@
+
+<style>
+  .tracker { padding: 1rem 0; font-family: var(--font-sans); }
+  .stats { display: flex; gap: 12px; margin-bottom: 1rem; }
+  .stat { flex: 1; background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 14px; }
+  .stat-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 2px; }
+  .stat-value { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+  .progress-bar { height: 6px; border-radius: 99px; background: var(--color-border-tertiary); margin-bottom: 1.2rem; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 99px; background: #1D9E75; transition: width 0.2s; }
+  .week-row { display: grid; grid-template-columns: 60px repeat(7, 1fr); gap: 4px; margin-bottom: 4px; align-items: center; }
+  .week-label { font-size: 11px; color: var(--color-text-tertiary); text-align: right; padding-right: 8px; }
+  .day-header-row { display: grid; grid-template-columns: 60px repeat(7, 1fr); gap: 4px; margin-bottom: 8px; }
+  .day-header { font-size: 11px; color: var(--color-text-secondary); text-align: center; font-weight: 500; }
+  .day { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 48px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); gap: 2px; cursor: pointer; user-select: none; transition: background 0.1s, border-color 0.1s; }
+  .day:hover { border-color: var(--color-border-secondary); }
+  .day.done { background: #E1F5EE; border-color: #5DCAA5; }
+  .day.done:hover { background: #c8eddf; }
+  .day.empty { background: var(--color-background-secondary); cursor: default; border-color: transparent; }
+  .day-num { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); }
+  .day.done .day-num { color: #0F6E56; }
+  .day-mark { font-size: 15px; font-weight: 500; color: #1D9E75; line-height: 1; }
+</style>
+
+<div class="tracker">
+  <h2 class="sr-only">90-day editable weekly progress tracker</h2>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-label">Completed</div><div class="stat-value" id="s-done" style="color:#1D9E75;">25</div></div>
+    <div class="stat"><div class="stat-label">Remaining</div><div class="stat-value" id="s-rem">65</div></div>
+    <div class="stat"><div class="stat-label">Progress</div><div class="stat-value" id="s-pct">28%</div></div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="fill" style="width:27.8%"></div></div>
+
+  <div class="day-header-row">
+    <div></div>
+    <div class="day-header">Mon</div>
+    <div class="day-header">Tue</div>
+    <div class="day-header">Wed</div>
+    <div class="day-header">Thu</div>
+    <div class="day-header">Fri</div>
+    <div class="day-header">Sat</div>
+    <div class="day-header">Sun</div>
+  </div>
+
+  <div id="grid"></div>
+</div>
+
+<script>
+const total = 90;
+const state = Array.from({length: total}, (_, i) => i < 25);
+
+function updateStats() {
+  const done = state.filter(Boolean).length;
+  document.getElementById('s-done').textContent = done;
+  document.getElementById('s-rem').textContent = total - done;
+  document.getElementById('s-pct').textContent = Math.round(done / total * 100) + '%';
+  document.getElementById('fill').style.width = Math.round(done / total * 100) + '%';
+}
+
+const grid = document.getElementById('grid');
+for (let w = 0; w < 13; w++) {
+  const row = document.createElement('div');
+  row.className = 'week-row';
+  const label = document.createElement('div');
+  label.className = 'week-label';
+  label.textContent = 'W' + (w + 1);
+  row.appendChild(label);
+  for (let d = 0; d < 7; d++) {
+    const idx = w * 7 + d;
+    const dayNum = idx + 1;
+    const cell = document.createElement('div');
+    if (dayNum > total) {
+      cell.className = 'day empty';
+      cell.innerHTML = '<span class="day-num" style="opacity:0.15;">—</span>';
+    } else {
+      cell.className = 'day' + (state[idx] ? ' done' : '');
+      cell.innerHTML = '<span class="day-num">' + dayNum + '</span><span class="day-mark">' + (state[idx] ? 'X' : '') + '</span>';
+      cell.addEventListener('click', () => {
+        state[idx] = !state[idx];
+        cell.className = 'day' + (state[idx] ? ' done' : '');
+        cell.querySelector('.day-mark').textContent = state[idx] ? 'X' : '';
+        updateStats();
+      });
+    }
+    row.appendChild(cell);
+  }
+  grid.appendChild(row);
+}
+</script>
